@@ -8,11 +8,31 @@
     <artifactId>lgc-mc-serversystem</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>Lotus Gaming Community Lobby System</name>
+    <url>https://www.lotusgaming.eu/</url>
+    <organization>
+		<name>Lotus Gaming Community</name>
+		<url>https://www.lotusgaming.eu/</url>
+	</organization>
+	
+	<developers>
+		<developer>
+			<id>ChrisWille2856</id>
+			<name>Christopher Wilhelm H.</name>
+			<email>info@kitsoft.at</email>
+		</developer>
+		<developer>
+			<id>Grubsic</id>
+			<name>Hidden</name>
+			<email>grubsic@lotusgaming.eu</email>
+		</developer>
+	</developers>
+
     <properties>
+		<java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spigot-api.version>1.20.4-R0.1-SNAPSHOT</spigot-api.version>
     </properties>
 
     <repositories>
@@ -20,15 +40,34 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        
+        <repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>${spigot-api.version}</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.4</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+			<groupId>com.github.MilkBowl</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.7</version>
+			<scope>provided</scope>
+		</dependency>
     </dependencies>
 
     <build>
