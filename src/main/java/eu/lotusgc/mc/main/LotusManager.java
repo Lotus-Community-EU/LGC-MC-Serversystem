@@ -6,6 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
+import eu.lotusgc.mc.event.JoinLeaveEvent;
+import eu.lotusgc.mc.event.KillStats;
+import eu.lotusgc.mc.event.ScoreboardHandler;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.SyncServerdata;
@@ -50,7 +53,9 @@ public class LotusManager {
 			long current = System.currentTimeMillis();
 			
 			PluginManager pm = Bukkit.getPluginManager();
-			
+			pm.registerEvents(new KillStats(), Main.main);
+			pm.registerEvents(new JoinLeaveEvent(), Main.main);
+			pm.registerEvents(new ScoreboardHandler(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}

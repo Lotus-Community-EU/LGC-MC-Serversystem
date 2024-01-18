@@ -39,6 +39,20 @@ public class ScoreboardHandler implements Listener{
 	private static HashMap<String, String> roleHM = new HashMap<>(); //HashMap for Team Priority (Sorted)
 	private static HashMap<String, String> sbHM = new HashMap<>(); //HashMap for Sideboard (Like Chat, just with no additional chars)
 	
+	/*
+	 * Scoreboard States:
+	 * 0 = off
+	 * 1 = default (view own info)
+	 * 2 = Jobs
+	 * 3 = Reports (Admin and higher - IPermissible "lgc.viewReports"
+	 * 4 = Serverstatus (Admin and higher - IPermissible "lgc.viewServerhealth"
+	 * 5 = Radio Information (not upon release - Radio will follow up later)
+	 * 6 = Servers and player count on each one
+	 * 7 = World Info and Coordinates
+	 * 8 = View Players around you (normal = 500 blocks, premium = 1000, Admin and higher (2500 blocks))
+	 * 9 = View Entities (except Players) around you (normal 100 blocks, premium 250 blocks, Staffs general up to 500 blocks (only the nearest 10 will be listed anyway!)
+	 */
+	
 	private static int sbSwitch = 0;
 	
 	public static void setScoreboard(Player player) {
@@ -54,6 +68,15 @@ public class ScoreboardHandler implements Listener{
 		sbSwitch++;
 		if(sbSwitch == 15) sbSwitch = 0; //resetting the Switcher to 0 so the views are going back again :)
 		o.setDisplayName(sbPrefix);
+		int sbState = getSBState(player);
+		if(sbState == 0) {
+			//Player chose not to have a sideboard.
+		}else if(sbState == -1) {
+			//Player wont see a sideboard as well, however due to an error.
+			Main.logger.severe("Sideboard status reports code '-1' !");
+		}else if(sbState == 1) {
+			
+		}
 		if(sbSwitch >= 0 && sbSwitch <= 3) {
 			//money
 			o.getScore(lc.sendMessageToFormat(player, "event.scoreboard.money")).setScore(2);
@@ -95,7 +118,7 @@ public class ScoreboardHandler implements Listener{
 		//Teams will be done later, functionality is now more important (hence no real getters for the sb yet)
 	}
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent event) {
 		setScoreboard(event.getPlayer());
 	}
@@ -105,6 +128,15 @@ public class ScoreboardHandler implements Listener{
 		LotusController lc = new LotusController();
 		String message = ChatColor.translateAlternateColorCodes('&', event.getMessage().replace("%", "%%"));
 		event.setFormat("§6ROLEPLACEHOLDER §7» " + event.getPlayer().getDisplayName() + " §7(" + lc.getPlayerData(event.getPlayer(), Playerdata.LotusChangeID)+ "): " + message);
+	}
+	
+	static int getSBState(Player player) {
+		LotusController lc = new LotusController();
+		if(lc.getPlayerData(player, Playerdata.SideboardState).matches("^[0-9]+$")) {
+			return Integer.parseInt(lc.getPlayerData(player, Playerdata.SideboardState));
+		}else {
+			return -1;
+		}
 	}
 	
 	public Team getTeam(Scoreboard scoreboard, String role, ChatColor chatcolor) {
