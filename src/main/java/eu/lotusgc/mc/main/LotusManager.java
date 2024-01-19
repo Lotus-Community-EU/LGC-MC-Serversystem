@@ -71,6 +71,8 @@ public class LotusManager {
 			lc.loadServerIDName();
 			
 			SyncServerdata.startScheduler();
+			ScoreboardHandler.initRoles();
+			new ScoreboardHandler().startScheduler(0, 40, 20);
 			
 			Main.luckPerms = (LuckPerms) Bukkit.getServer().getServicesManager().load(LuckPerms.class);
 			
