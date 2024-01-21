@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 
 import eu.lotusgc.mc.command.ChatClearCMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
+import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -59,6 +60,7 @@ public class LotusManager {
 			Main.main.getCommand("profile").setExecutor(new OpenCommand());
 			Main.main.getCommand("gm").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("cc").setExecutor(new ChatClearCMD());
+			Main.main.getCommand("invsee").setExecutor(new InvseeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

@@ -11,4 +11,5 @@ commands:
         alias: gamemode
     cc:
         alias: chatclear
+    invsee:
     
