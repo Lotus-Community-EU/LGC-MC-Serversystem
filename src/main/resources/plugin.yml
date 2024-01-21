@@ -9,4 +9,6 @@ commands:
     profile:
     gm:
         alias: gamemode
+    cc:
+        alias: chatclear
     
