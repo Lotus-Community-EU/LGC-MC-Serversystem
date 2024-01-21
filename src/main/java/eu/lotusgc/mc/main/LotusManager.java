@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
+import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -55,6 +56,7 @@ public class LotusManager {
 			
 			Main.main.getCommand("s").setExecutor(new OpenCommand());
 			Main.main.getCommand("profile").setExecutor(new OpenCommand());
+			Main.main.getCommand("gm").setExecutor(new GamemodeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
