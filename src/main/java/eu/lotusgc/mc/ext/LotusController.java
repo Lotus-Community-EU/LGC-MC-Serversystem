@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +52,9 @@ public class LotusController {
 	//Servername and ServerID
 	private static String servername = "Server";
 	private static String serverid = "0";
+	
+	//misc
+	private static List<UUID> afkPlayers = new ArrayList<>();
 	
 	// < - - - END OF INSTANCES - - - >
 	
@@ -556,6 +560,22 @@ public class LotusController {
 		case "BETA": return "§dBeta";
 		case "EVERYONE": return "§aEveryone";
 		default: Main.logger.severe("Error in LotusController#translateJoinLevel() - expected ALPHA,BETA,EVERYONE but got " + input); return "§aEveryone";
+		}
+	}
+	
+	public boolean isPlayerAFK(Player player) {
+		if(afkPlayers.contains(player.getUniqueId())) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public void setPlayerN_AFK(Player player, boolean status) {
+		if(status) {
+			afkPlayers.add(player.getUniqueId());
+		}else {
+			if(afkPlayers.contains(player.getUniqueId())) afkPlayers.remove(player.getUniqueId());
 		}
 	}
 }
