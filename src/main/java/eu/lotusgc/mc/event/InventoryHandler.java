@@ -36,18 +36,28 @@ public class InventoryHandler implements Listener{
 	
 	public static String language_title = "§6Languages";
 	
+	public static String userProfile_title = "§bProfile Settings";
+	static String userProfile_resetProfile = "§4Reset Profile";
+	static String userProfile_ownStats = "%player%§7's Profile";
+	
 	public static void setNavigatorInventory(Player player) {
 		Inventory mainInventory = Bukkit.createInventory(null, 2*9, navi_title);
 		LotusController lc = new LotusController();
-		for(int i = 0; i < 18; i++) {
+		for(int i = 0; i < 26; i++) {
 			mainInventory.setItem(i, lc.defItem(Material.LIME_STAINED_GLASS_PANE, "§0", 1));
 		}
-		mainInventory.setItem(3, lc.defItem(Material.EMERALD, navi_spawn, 1));
-		mainInventory.setItem(9, lc.naviServerItem(Material.DIAMOND_PICKAXE, "Creative"));
-		mainInventory.setItem(11, lc.naviServerItem(Material.GRASS_BLOCK, "SkyBlock"));
-		mainInventory.setItem(13, lc.naviServerItem(Material.NETHERITE_AXE, "Survival"));
-		mainInventory.setItem(15, lc.naviServerItem(Material.RED_BED, "Gameslobby"));
-		mainInventory.setItem(17, lc.naviServerItem(Material.GOLDEN_HOE, "Farmserver"));
+		mainInventory.setItem(2, lc.naviServerItem(Material.RED_BED, "Gameslobby"));
+		mainInventory.setItem(6, lc.naviServerItem(Material.NETHERITE_AXE, "Survival"));
+		mainInventory.setItem(10, lc.naviServerItem(Material.GRASS_BLOCK, "SkyBlock"));
+		mainInventory.setItem(13, lc.defItem(Material.EMERALD, navi_spawn, 1));
+		mainInventory.setItem(16, lc.naviServerItem(Material.GOLDEN_HOE, "Farmserver"));
+		mainInventory.setItem(20, lc.naviServerItem(Material.WOODEN_AXE, "Staffserver"));
+		mainInventory.setItem(24, lc.naviServerItem(Material.DIAMOND_PICKAXE, "Creative"));
+		player.openInventory(mainInventory);
+	}
+	
+	public static void profileSettings(Player player) {
+		Inventory mainInventory = Bukkit.createInventory(null, 9*3, userProfile_title);
 		player.openInventory(mainInventory);
 	}
 	
