@@ -5,3 +5,6 @@ main: eu.lotusgc.mc.main.Main
 api-version: 1.20
 
 commands:
+    s:
+    profile:
+    
