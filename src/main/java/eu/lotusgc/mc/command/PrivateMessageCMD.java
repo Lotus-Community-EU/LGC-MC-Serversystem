@@ -26,5 +26,10 @@ public class PrivateMessageCMD implements CommandExecutor{
 		}
 		return false;
 	}
+	
+	boolean hasPMBlocked(Player player) {
+		boolean isBlocked = false;
+		return isBlocked;
+	}
 
 }
