@@ -230,6 +230,16 @@ public class ScoreboardHandler implements Listener{
 			}
 		}.runTaskTimer(Main.main, delay, sideboardRefresh);
 		
+		//For tasks which needs to run on main thread
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				new ServerRestarter().triggerRestart();
+				new ClearLag().triggerClearlag();
+			}
+		}.runTaskTimer(Main.main, delay, tabRefresh);
+		
+		//For tasks which can run on alternative threads (async)
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -238,8 +248,6 @@ public class ScoreboardHandler implements Listener{
 				for(Player all : Bukkit.getOnlinePlayers()) {
 					all.setPlayerListHeaderFooter("§cLotus §aGaming §fCommunity", "§7Server: §a" + lc.getServerName() + "\n§7Time: §a" + sdf.format(new Date()) + "\n§7Ping: §a" + all.getPing());
 				}
-				new ServerRestarter().triggerRestart();
-				new ClearLag().triggerClearlag();
 			}
 		}.runTaskTimerAsynchronously(Main.main, delay, tabRefresh);
 	}
