@@ -134,6 +134,8 @@ public class Homesystem implements CommandExecutor{
 			if(cfg.contains(player.getUniqueId().toString())) {
 				int old = cfg.getInt(player.getUniqueId().toString());
 				cfg.set(player.getUniqueId().toString(), (old + 1));
+			}else {
+				cfg.set(player.getUniqueId().toString(), 1);
 			}
 		}else if(type == Count.DOWN) {
 			if(cfg.contains(player.getUniqueId().toString())) {
