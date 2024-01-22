@@ -61,7 +61,7 @@ public class Homesystem implements CommandExecutor{
 							sb.append(args[i]).append(" ");
 						}
 						String text = sb.toString();
-						addHome(player, lc.getServerName(), text);
+						addHome(player, text, lc.getServerName());
 					}
 				}else {
 					lc.noPerm(player, "lgc.useHomesystem");
@@ -76,7 +76,7 @@ public class Homesystem implements CommandExecutor{
 							sb.append(args[i]).append(" ");
 						}
 						String text = sb.toString();
-						deleteHome(player, lc.getServerName(), text);
+						deleteHome(player, text, lc.getServerName());
 					}
 				}else {
 					lc.noPerm(player, "lgc.useHomesystem");
@@ -112,7 +112,7 @@ public class Homesystem implements CommandExecutor{
 							sb.append(args[i]).append(" ");
 						}
 						String text = sb.toString();
-						tpToHome(player, lc.getServerName(), text);
+						tpToHome(player, text, lc.getServerName());
 					}
 				}else {
 					lc.noPerm(player, "lgc.useHomesystem");
