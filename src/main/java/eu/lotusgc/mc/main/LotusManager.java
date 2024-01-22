@@ -8,8 +8,10 @@ import org.bukkit.plugin.PluginManager;
 
 import eu.lotusgc.mc.command.ChatClearCMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
+import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
+import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
@@ -43,7 +45,7 @@ public class LotusManager {
 			cfg.addDefault("MySQL.Password", "pass");
 			cfg.options().copyDefaults(true);
 			
-			try { cfg.save(mainConfig); } catch (Exception ex) { }
+			try { cfg.save(mainConfig); Homesystem.initialiseFile(); } catch (Exception ex) { }
 			
 			if(!cfg.getString("MySQL.Password").equalsIgnoreCase("pass")) {
 				MySQL.connect(cfg.getString("MySQL.Host"), cfg.getString("MySQL.Port"), cfg.getString("MySQL.Database"), cfg.getString("MySQL.Username"), cfg.getString("MySQL.Password"));
@@ -61,6 +63,11 @@ public class LotusManager {
 			Main.main.getCommand("gm").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("cc").setExecutor(new ChatClearCMD());
 			Main.main.getCommand("invsee").setExecutor(new InvseeCMD());
+			Main.main.getCommand("sethome").setExecutor(new Homesystem());
+			Main.main.getCommand("delhome").setExecutor(new Homesystem());
+			Main.main.getCommand("listhomes").setExecutor(new Homesystem());
+			Main.main.getCommand("home").setExecutor(new Homesystem());
+			Main.main.getCommand("time").setExecutor(new TimeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

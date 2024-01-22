@@ -41,7 +41,7 @@ public class InventoryHandler implements Listener{
 	static String userProfile_ownStats = "%player%§7's Profile";
 	
 	public static void setNavigatorInventory(Player player) {
-		Inventory mainInventory = Bukkit.createInventory(null, 2*9, navi_title);
+		Inventory mainInventory = Bukkit.createInventory(null, 3*9, navi_title);
 		LotusController lc = new LotusController();
 		for(int i = 0; i < 26; i++) {
 			mainInventory.setItem(i, lc.defItem(Material.LIME_STAINED_GLASS_PANE, "§0", 1));
