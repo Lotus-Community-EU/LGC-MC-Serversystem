@@ -12,4 +12,8 @@ commands:
     cc:
         alias: chatclear
     invsee:
+    sethome:
+    listhomes:
+    delhome:
+    home:
     
