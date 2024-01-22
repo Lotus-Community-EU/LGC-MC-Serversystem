@@ -17,7 +17,9 @@ public enum Playerdata {
 	MoneyBank("money_bank"),
 	MoneyPocket("money_pocket"),
 	MoneyInterestLevel("money_interestLevel"),
-	Language("language");
+	Language("language"),
+	CustomTimeFormat("customTimeFormat"),
+	CustomDateFormat("customDateFormat");
 	
 	public String playerData;
 	
