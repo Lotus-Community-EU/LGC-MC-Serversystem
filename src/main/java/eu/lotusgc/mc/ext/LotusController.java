@@ -559,7 +559,8 @@ public class LotusController {
 		case "ALPHA": return "§cAlpha";
 		case "BETA": return "§dBeta";
 		case "EVERYONE": return "§aEveryone";
-		default: Main.logger.severe("Error in LotusController#translateJoinLevel() - expected ALPHA,BETA,EVERYONE but got " + input); return "§aEveryone";
+		case "STAFF": return "§cStaff";
+		default: Main.logger.severe("Error in LotusController#translateJoinLevel() - expected ALPHA,BETA,STAFF,EVERYONE but got " + input); return "§aEveryone";
 		}
 	}
 	
