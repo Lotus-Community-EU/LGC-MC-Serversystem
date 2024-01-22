@@ -16,4 +16,5 @@ commands:
     listhomes:
     delhome:
     home:
+    time:
     

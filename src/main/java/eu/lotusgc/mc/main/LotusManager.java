@@ -11,6 +11,7 @@ import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
+import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
@@ -66,6 +67,7 @@ public class LotusManager {
 			Main.main.getCommand("delhome").setExecutor(new Homesystem());
 			Main.main.getCommand("listhomes").setExecutor(new Homesystem());
 			Main.main.getCommand("home").setExecutor(new Homesystem());
+			Main.main.getCommand("time").setExecutor(new TimeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
