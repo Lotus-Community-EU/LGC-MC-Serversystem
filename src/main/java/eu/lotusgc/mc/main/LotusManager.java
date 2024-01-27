@@ -11,6 +11,7 @@ import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
+import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -43,6 +44,7 @@ public class LotusManager {
 			cfg.addDefault("MySQL.Database", "TheDataBaseTM");
 			cfg.addDefault("MySQL.Username", "user");
 			cfg.addDefault("MySQL.Password", "pass");
+			cfg.addDefault("Password.PMs", "APassword");
 			cfg.options().copyDefaults(true);
 			
 			try { cfg.save(mainConfig); Homesystem.initialiseFile(); } catch (Exception ex) { }
@@ -68,6 +70,9 @@ public class LotusManager {
 			Main.main.getCommand("listhomes").setExecutor(new Homesystem());
 			Main.main.getCommand("home").setExecutor(new Homesystem());
 			Main.main.getCommand("time").setExecutor(new TimeCMD());
+			Main.main.getCommand("msg").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("msgopt").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

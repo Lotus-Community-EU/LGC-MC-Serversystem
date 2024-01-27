@@ -17,4 +17,7 @@ commands:
     delhome:
     home:
     time:
+    msg:
+    msgopt:
+    r:
     
