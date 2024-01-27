@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
 import eu.lotusgc.mc.command.ChatClearCMD;
+import eu.lotusgc.mc.command.FlyCMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
@@ -73,11 +74,13 @@ public class LotusManager {
 			Main.main.getCommand("msg").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("msgopt").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("fly").setExecutor(new FlyCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
 			pm.registerEvents(new JoinLeaveEvent(), Main.main);
 			pm.registerEvents(new ScoreboardHandler(), Main.main);
+			pm.registerEvents(new FlyCMD(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
