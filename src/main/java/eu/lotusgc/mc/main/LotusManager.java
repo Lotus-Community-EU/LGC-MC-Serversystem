@@ -7,13 +7,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
 import eu.lotusgc.mc.command.ChatClearCMD;
+import eu.lotusgc.mc.command.ClearLagCMD;
 import eu.lotusgc.mc.command.FlyCMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
+import eu.lotusgc.mc.command.ScoreboardChangeCMD;
 import eu.lotusgc.mc.command.TimeCMD;
+import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -77,6 +80,9 @@ public class LotusManager {
 			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("fly").setExecutor(new FlyCMD());
 			Main.main.getCommand("workbench").setExecutor(new WorkbenchCMD());
+			Main.main.getCommand("weather").setExecutor(new WeatherCMD());
+			Main.main.getCommand("sb").setExecutor(new ScoreboardChangeCMD());
+			Main.main.getCommand("clearlag").setExecutor(new ClearLagCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

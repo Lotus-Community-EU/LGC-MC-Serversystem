@@ -23,4 +23,7 @@ commands:
     fly:
     workbench:
         alias: wb
+    weather:
+    sb:
+    clearlag:
     
