@@ -14,6 +14,7 @@ import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.TimeCMD;
+import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -77,6 +78,7 @@ public class LotusManager {
 			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("fly").setExecutor(new FlyCMD());
 			Main.main.getCommand("workbench").setExecutor(new WorkbenchCMD());
+			Main.main.getCommand("weather").setExecutor(new WeatherCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
