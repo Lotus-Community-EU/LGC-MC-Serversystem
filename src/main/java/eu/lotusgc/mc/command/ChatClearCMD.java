@@ -25,14 +25,22 @@ public class ChatClearCMD implements CommandExecutor{
 					clearMessage(player);
 					lc.sendMessageReady(player, "command.cc.private");
 				}else if(mode.equalsIgnoreCase("global")) {
-					for(Player all : Bukkit.getOnlinePlayers()) {
-						clearMessage(all);
-						all.sendMessage(lc.getPrefix(Prefix.System) + lc.sendMessageToFormat(all, "command.cc.global").replace("%displayer%", player.getDisplayName()));
+					if(player.hasPermission("lgc.command.chatclear.global")) {
+						for(Player all : Bukkit.getOnlinePlayers()) {
+							clearMessage(all);
+							all.sendMessage(lc.getPrefix(Prefix.System) + lc.sendMessageToFormat(all, "command.cc.global").replace("%displayer%", player.getDisplayName()));
+						}
+					}else {
+						lc.noPerm(player, "lgc.command.chatclear.global");
 					}
 				}else if(mode.equalsIgnoreCase("anonymous")) {
-					for(Player all : Bukkit.getOnlinePlayers()) {
-						clearMessage(all);
-						lc.sendMessageReady(all, "command.cc.anonymous");
+					if(player.hasPermission("lgc.command.chatclear.anonymous")) {
+						for(Player all : Bukkit.getOnlinePlayers()) {
+							clearMessage(all);
+							lc.sendMessageReady(all, "command.cc.anonymous");
+						}
+					}else {
+						lc.noPerm(player, "lgc.command.chatclear.anonymous");
 					}
 				}else {
 					player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/cc <private|global|anonymous>");
