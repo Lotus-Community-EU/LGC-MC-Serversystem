@@ -25,4 +25,5 @@ commands:
         alias: wb
     weather:
     sb:
+    clearlag:
     
