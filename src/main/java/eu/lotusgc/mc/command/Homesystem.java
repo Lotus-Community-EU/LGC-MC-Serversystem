@@ -40,9 +40,12 @@ public class Homesystem implements CommandExecutor{
 	 * - lgc.useHomesystem | General Permission
 	 * - lgc.bypassHomeLimit | Permission to bypass Homelimit (6 Homes per Server)
 	 */
+	{
+		maxHomes = getMaxHomes();
+	}
 	
 	static File homes = new File("plugins/LotusGaming/homes.yml");
-	static int maxHomes = 6;
+	static int maxHomes = 0;
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -128,6 +131,22 @@ public class Homesystem implements CommandExecutor{
 		}
 	}
 	
+	int getMaxHomes() {
+		try {
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT maxHomes FROM mc_serverstats WHERE servername = ?");
+			ps.setString(1, new LotusController().getServerName());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				return rs.getInt("maxHomes");
+			}else {
+				return 6; //If no row exist yet, return 6 for default.
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 6;
+		}
+	}
+	
 	void updateHomeCount(Player player, Count type) {
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(homes);
 		if(type == Count.UP) {
@@ -147,6 +166,15 @@ public class Homesystem implements CommandExecutor{
 			cfg.save(homes);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	int getHomeCount(Player player) {
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(homes);
+		if(cfg.contains(player.getUniqueId().toString())) {
+			return cfg.getInt(player.getUniqueId().toString());
+		}else {
+			return 0;
 		}
 	}
 	
@@ -174,25 +202,46 @@ public class Homesystem implements CommandExecutor{
 	}
 	
 	void addHome(Player player, String homename, String server) {
+		LotusController lc = new LotusController();
 		if(existHome(player, homename, server)) {
-			LotusController lc = new LotusController();
 			player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sethome.homeexistalready").replace("%homename%", homename));
 			// command.sethome.homeexistalready -> The homename %homename% exists already!
 		}else {
-			try {
-				PreparedStatement ps = MySQL.getConnection().prepareStatement("INSERT INTO mc_homes(mcuuid, server, name, positionData, setAt) VALUES (?, ?, ?, ?, ?)");
-				ps.setString(1, player.getUniqueId().toString());
-				ps.setString(2, server);
-				ps.setString(3, homename);
-				ps.setString(4, translateLocationPosData(player.getLocation()));
-				ps.setLong(5, System.currentTimeMillis());
-				ps.executeUpdate();
-				updateHomeCount(player, Count.UP);
-				LotusController lc = new LotusController();
-				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sethome.success").replace("%homename%", homename));
-				//command.sethome.success -> The home has been set as %homename%
-			} catch (SQLException e) {
-				e.printStackTrace();
+			if(getHomeCount(player) <= maxHomes) {
+				try {
+					PreparedStatement ps = MySQL.getConnection().prepareStatement("INSERT INTO mc_homes(mcuuid, server, name, positionData, setAt) VALUES (?, ?, ?, ?, ?)");
+					ps.setString(1, player.getUniqueId().toString());
+					ps.setString(2, server);
+					ps.setString(3, homename);
+					ps.setString(4, translateLocationPosData(player.getLocation()));
+					ps.setLong(5, System.currentTimeMillis());
+					ps.executeUpdate();
+					updateHomeCount(player, Count.UP);
+					player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sethome.success").replace("%homename%", homename));
+					//command.sethome.success -> The home has been set as %homename%
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}else {
+				if(player.hasPermission("lgc.bypassHomeLimit")) {
+					try {
+						PreparedStatement ps = MySQL.getConnection().prepareStatement("INSERT INTO mc_homes(mcuuid, server, name, positionData, setAt) VALUES (?, ?, ?, ?, ?)");
+						ps.setString(1, player.getUniqueId().toString());
+						ps.setString(2, server);
+						ps.setString(3, homename);
+						ps.setString(4, translateLocationPosData(player.getLocation()));
+						ps.setLong(5, System.currentTimeMillis());
+						ps.executeUpdate();
+						updateHomeCount(player, Count.UP);
+						player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sethome.success").replace("%homename%", homename));
+						lc.sendMessageReady(player, "command.sethome.overLimit.bypass");
+						//command.sethome.success -> The home has been set as %homename%
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}else {
+					lc.sendMessageReady(player, "command.sethome.overLimit.error");
+				}
 			}
 		}
 	}
