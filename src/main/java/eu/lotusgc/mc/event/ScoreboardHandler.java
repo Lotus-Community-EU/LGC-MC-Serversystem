@@ -4,8 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,6 +34,7 @@ import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
 import eu.lotusgc.mc.misc.Prefix;
 import eu.lotusgc.mc.misc.ServerRestarter;
+import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 
@@ -98,7 +102,39 @@ public class ScoreboardHandler implements Listener{
 		}
 		player.setScoreboard(sb);
 		
-		//Teams will be done later, functionality is now more important (hence no real getters for the sb yet)
+		Team projlead = getTeam(sb, "projectLead", ChatColor.DARK_GRAY);
+		Team userg = getTeam(sb, "", ChatColor.WHITE);
+		
+		for(Player all : Bukkit.getOnlinePlayers()) {
+			//Lotus Internal
+			String nick = lc.getPlayerData(all, Playerdata.Nick);
+			String clan = lc.getPlayerData(all, Playerdata.Clan);
+			String id = lc.getPlayerData(player, Playerdata.LotusChangeID);
+			if(nick.equalsIgnoreCase("none")) {
+				all.setCustomName(all.getName());
+			}else {
+				all.setCustomName(nick);
+			}
+			if(clan.equalsIgnoreCase("none")) {
+				clan = "";
+			}
+			
+			//LuckPerms
+			UserManager um = Main.luckPerms.getUserManager();
+			User user = um.getUser(all.getName());
+			
+			if(user.getPrimaryGroup().equalsIgnoreCase("projectleader")) {
+				projlead.addEntry(all.getName());
+				all.setDisplayName(returnPrefix(user.getPrimaryGroup(), RankType.CHAT) + all.getCustomName());
+				all.setPlayerListName(returnPrefix(user.getPrimaryGroup(), RankType.TAB) + all.getCustomName() + "§7ID: §a" + id + " §f" + clan);
+			}else if(user.getPrimaryGroup().equalsIgnoreCase("")) {
+				
+			}else {
+				userg.addEntry(all.getName());
+				all.setDisplayName(returnPrefix("player", RankType.CHAT) + all.getCustomName());
+				all.setPlayerListName(returnPrefix("player", RankType.TAB) + all.getCustomName() + "§7ID: §a" + id + " §f" + clan);
+			}
+		}
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
@@ -141,8 +177,10 @@ public class ScoreboardHandler implements Listener{
 		team.setPrefix(returnPrefix(role, RankType.TAB));
 		team.setColor(chatcolor);
 		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER); //TBD for removal if issues arise.
-		return null;
+		return team;
 	}
+	
+	
 	
 	private static String retGroup(Player player) {
 		String group = "";
