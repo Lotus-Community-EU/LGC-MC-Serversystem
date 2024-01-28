@@ -21,4 +21,6 @@ commands:
     msgopt:
     r:
     fly:
+    workbench:
+        alias: wb
     

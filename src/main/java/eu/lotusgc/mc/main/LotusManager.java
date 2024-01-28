@@ -14,6 +14,7 @@ import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.TimeCMD;
+import eu.lotusgc.mc.command.WorkbenchCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
@@ -75,6 +76,7 @@ public class LotusManager {
 			Main.main.getCommand("msgopt").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
 			Main.main.getCommand("fly").setExecutor(new FlyCMD());
+			Main.main.getCommand("workbench").setExecutor(new WorkbenchCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
