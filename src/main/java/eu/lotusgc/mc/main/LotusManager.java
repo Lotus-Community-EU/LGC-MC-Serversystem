@@ -13,6 +13,7 @@ import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
+import eu.lotusgc.mc.command.ScoreboardChangeCMD;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
@@ -79,6 +80,7 @@ public class LotusManager {
 			Main.main.getCommand("fly").setExecutor(new FlyCMD());
 			Main.main.getCommand("workbench").setExecutor(new WorkbenchCMD());
 			Main.main.getCommand("weather").setExecutor(new WeatherCMD());
+			Main.main.getCommand("sb").setExecutor(new ScoreboardChangeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

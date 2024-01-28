@@ -24,4 +24,5 @@ commands:
     workbench:
         alias: wb
     weather:
+    sb:
     
