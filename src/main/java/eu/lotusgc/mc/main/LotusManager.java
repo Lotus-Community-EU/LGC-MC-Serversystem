@@ -7,11 +7,14 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
 import eu.lotusgc.mc.command.ChatClearCMD;
+import eu.lotusgc.mc.command.FlyCMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
+import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.TimeCMD;
+import eu.lotusgc.mc.command.WorkbenchCMD;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
@@ -43,6 +46,7 @@ public class LotusManager {
 			cfg.addDefault("MySQL.Database", "TheDataBaseTM");
 			cfg.addDefault("MySQL.Username", "user");
 			cfg.addDefault("MySQL.Password", "pass");
+			cfg.addDefault("Password.PMs", "APassword");
 			cfg.options().copyDefaults(true);
 			
 			try { cfg.save(mainConfig); Homesystem.initialiseFile(); } catch (Exception ex) { }
@@ -68,11 +72,17 @@ public class LotusManager {
 			Main.main.getCommand("listhomes").setExecutor(new Homesystem());
 			Main.main.getCommand("home").setExecutor(new Homesystem());
 			Main.main.getCommand("time").setExecutor(new TimeCMD());
+			Main.main.getCommand("msg").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("msgopt").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("r").setExecutor(new PrivateMessageCMD());
+			Main.main.getCommand("fly").setExecutor(new FlyCMD());
+			Main.main.getCommand("workbench").setExecutor(new WorkbenchCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
 			pm.registerEvents(new JoinLeaveEvent(), Main.main);
 			pm.registerEvents(new ScoreboardHandler(), Main.main);
+			pm.registerEvents(new FlyCMD(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}

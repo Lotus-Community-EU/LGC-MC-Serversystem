@@ -17,4 +17,10 @@ commands:
     delhome:
     home:
     time:
+    msg:
+    msgopt:
+    r:
+    fly:
+    workbench:
+        alias: wb
     
