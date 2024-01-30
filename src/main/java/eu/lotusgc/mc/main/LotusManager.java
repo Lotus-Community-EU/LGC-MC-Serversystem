@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
+import eu.lotusgc.mc.command.AfKCMD;
 import eu.lotusgc.mc.command.ChatClearCMD;
 import eu.lotusgc.mc.command.ClearLagCMD;
 import eu.lotusgc.mc.command.FlyCMD;
@@ -83,12 +84,14 @@ public class LotusManager {
 			Main.main.getCommand("weather").setExecutor(new WeatherCMD());
 			Main.main.getCommand("sb").setExecutor(new ScoreboardChangeCMD());
 			Main.main.getCommand("clearlag").setExecutor(new ClearLagCMD());
+			Main.main.getCommand("afk").setExecutor(new AfKCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
 			pm.registerEvents(new JoinLeaveEvent(), Main.main);
 			pm.registerEvents(new ScoreboardHandler(), Main.main);
 			pm.registerEvents(new FlyCMD(), Main.main);
+			pm.registerEvents(new AfKCMD(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
