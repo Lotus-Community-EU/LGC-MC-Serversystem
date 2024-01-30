@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import eu.lotusgc.mc.ext.LotusController;
@@ -40,6 +41,15 @@ public class AfKCMD implements Listener, CommandExecutor{
 	
 	@EventHandler
 	public void onMove(PlayerMoveEvent event) {
+		LotusController lc = new LotusController();
+		if(afkList.contains(event.getPlayer().getUniqueId())) {
+			afkList.remove(event.getPlayer().getUniqueId());
+			lc.sendMessageReady(event.getPlayer(), "command.afk.remove"); //You are not AFK anymore.
+		}
+	}
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent event) {
 		LotusController lc = new LotusController();
 		if(afkList.contains(event.getPlayer().getUniqueId())) {
 			afkList.remove(event.getPlayer().getUniqueId());
