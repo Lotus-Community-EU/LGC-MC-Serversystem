@@ -19,6 +19,7 @@ import eu.lotusgc.mc.command.ScoreboardChangeCMD;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
+import eu.lotusgc.mc.event.InventoryHandler;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
@@ -92,6 +93,7 @@ public class LotusManager {
 			pm.registerEvents(new ScoreboardHandler(), Main.main);
 			pm.registerEvents(new FlyCMD(), Main.main);
 			pm.registerEvents(new AfKCMD(), Main.main);
+			pm.registerEvents(new InventoryHandler(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
@@ -109,6 +111,7 @@ public class LotusManager {
 			SyncServerdata.startScheduler();
 			ScoreboardHandler.initRoles();
 			new ScoreboardHandler().startScheduler(0, 40, 20);
+			InventoryHandler.loadServer();
 			
 			Main.luckPerms = (LuckPerms) Bukkit.getServer().getServicesManager().load(LuckPerms.class);
 			
