@@ -8,9 +8,9 @@ commands:
     s:
     profile:
     gamemode:
-        alias: gm
+        aliases: gm
     cc:
-        alias: chatclear
+        aliases: chatclear
     invsee:
     sethome:
     listhomes:
@@ -22,10 +22,9 @@ commands:
     r:
     fly:
     workbench:
-        alias: wb
+        aliases: wb
     weather:
     sb:
     clearlag:
     afk:
     
-    # INFO: ALIAS IS NOT BEING DETECTED! BUGFIX PLS
