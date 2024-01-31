@@ -68,7 +68,6 @@ public class LotusManager {
 			
 			Main.main.getCommand("s").setExecutor(new OpenCommand());
 			Main.main.getCommand("profile").setExecutor(new OpenCommand());
-			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("cc").setExecutor(new ChatClearCMD());
 			Main.main.getCommand("invsee").setExecutor(new InvseeCMD());
 			Main.main.getCommand("sethome").setExecutor(new Homesystem());
@@ -85,6 +84,7 @@ public class LotusManager {
 			Main.main.getCommand("sb").setExecutor(new ScoreboardChangeCMD());
 			Main.main.getCommand("clearlag").setExecutor(new ClearLagCMD());
 			Main.main.getCommand("afk").setExecutor(new AfKCMD());
+			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
