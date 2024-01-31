@@ -208,7 +208,7 @@ public class PrivateMessageCMD implements CommandExecutor{
 			try {
 				PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_msgblock SET hasBlocked = ?, blockCount = ? WHERE blocker = ?");
 				ps.setString(1, newData);
-				ps.setInt(1, newBlockCount);
+				ps.setInt(2, newBlockCount);
 				ps.setString(3, blocker.getUniqueId().toString());
 				ps.executeUpdate();
 			} catch (SQLException e) {
