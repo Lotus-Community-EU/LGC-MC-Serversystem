@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -149,7 +148,7 @@ public class ScoreboardHandler implements Listener{
 		Team addon = getTeam(sb, "addon", ChatColor.GRAY);
 		Team retired = getTeam(sb, "retired", ChatColor.WHITE);
 		Team beta = getTeam(sb, "beta", ChatColor.WHITE);
-		Team userg = getTeam(sb, "user", ChatColor.WHITE);
+		Team userg = getTeam(sb, "default", ChatColor.WHITE);
 		Team afk = sb.registerNewTeam("00500");
 		afk.setPrefix("§9");
 		afk.setColor(ChatColor.DARK_AQUA);
@@ -247,16 +246,11 @@ public class ScoreboardHandler implements Listener{
 					all.setPlayerListName(returnPrefix(user.getPrimaryGroup(), RankType.TAB) + all.getCustomName() + " §7(§a" + id + "§7) §f" + clan);
 				}else {
 					userg.addEntry(all.getName());
-					all.setDisplayName(returnPrefix("player", RankType.CHAT) + all.getCustomName());
-					all.setPlayerListName(returnPrefix("player", RankType.TAB) + all.getCustomName() + "§7ID: §a" + id + " §f" + clan);
+					all.setDisplayName(returnPrefix("default", RankType.CHAT) + all.getCustomName());
+					all.setPlayerListName(returnPrefix("default", RankType.TAB) + all.getCustomName() + " §7(§a" + id + "§7) §f" + clan);
 				}
 			}
 		}
-	}
-	
-	@EventHandler(priority=EventPriority.HIGHEST)
-	public void onJoin(PlayerJoinEvent event) {
-		setScoreboard(event.getPlayer());
 	}
 	
 	@EventHandler(priority=EventPriority.HIGHEST)
@@ -314,13 +308,11 @@ public class ScoreboardHandler implements Listener{
 	
 	
 	
-	private static String retGroup(Player player) {
+	private String retGroup(Player player) {
 		String group = "";
 		UserManager um = Main.luckPerms.getUserManager();
 		User user = um.getUser(player.getName());
-		switch(user.getPrimaryGroup()) {
-		default: group = user.getPrimaryGroup(); break;
-		}
+		group = "§a" + returnPrefix(user.getPrimaryGroup(), RankType.SIDEBOARD);
 		return group;
 	}
 	
