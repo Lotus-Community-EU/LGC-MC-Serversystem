@@ -22,6 +22,10 @@ import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
 import eu.lotusgc.mc.misc.Prefix;
 
+@org.bukkit.plugin.java.annotation.command.Command(name="sethome")
+@org.bukkit.plugin.java.annotation.command.Command(name="delhome")
+@org.bukkit.plugin.java.annotation.command.Command(name="sethome")
+@org.bukkit.plugin.java.annotation.command.Command(name="home")
 public class Homesystem implements CommandExecutor{
 	
 	/*

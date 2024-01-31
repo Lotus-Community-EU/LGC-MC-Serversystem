@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 
+@org.bukkit.plugin.java.annotation.command.Command(name="afk", desc="Un/Sets you into/from AFK")
 public class AfKCMD implements Listener, CommandExecutor{
 	
 	public static List<UUID> afkList = new ArrayList<>();

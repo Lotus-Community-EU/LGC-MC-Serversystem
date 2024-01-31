@@ -5,11 +5,15 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.annotation.permission.Permission;
 
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.Prefix;
 
+@org.bukkit.plugin.java.annotation.command.Command(name="chatclear", aliases= {"cc"}, usage="/cc <private|global|anonymous>")
+@Permission(name="lgc.command.chatclear.global", desc="Allows execution of clearing the chat with clear name")
+@Permission(name="lgc.command.chatclear.anoynmous", desc="Allows execution of clearing the chat with no shown name")
 public class ChatClearCMD implements CommandExecutor{
 
 	@Override

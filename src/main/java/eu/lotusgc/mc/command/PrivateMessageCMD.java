@@ -22,6 +22,10 @@ import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Prefix;
 import eu.lotusgc.mc.misc.TextCryptor;
 
+
+@org.bukkit.plugin.java.annotation.command.Command(name="msg")
+@org.bukkit.plugin.java.annotation.command.Command(name="r")
+@org.bukkit.plugin.java.annotation.command.Command(name="msgopt")
 public class PrivateMessageCMD implements CommandExecutor{
 	
 	/*

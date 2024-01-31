@@ -10,6 +10,8 @@ import eu.lotusgc.mc.event.InventoryHandler;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 
+@org.bukkit.plugin.java.annotation.command.Command(name="s")
+@org.bukkit.plugin.java.annotation.command.Command(name="profile")
 public class OpenCommand implements CommandExecutor{
 
 	@Override
