@@ -100,8 +100,6 @@ public class InventoryHandler implements Listener{
 					}else {
 						sendPlayerToServer(player, itemName, bungeeName, lc);
 					}
-				}else {
-					//server dead - how poor lol
 				}
 			}else {
 				if(itemName.equalsIgnoreCase(navi_spawn)) {
