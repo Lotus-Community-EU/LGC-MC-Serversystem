@@ -11,7 +11,8 @@ public enum Serverdata {
 	IsHybrid("isHybrid"),
 	RequiredJoinlevel("req_joinlevel"),
 	ServerPlayerCapacity("playerCapacity"),
-	BungeeCordKey("bungeeKey");
+	BungeeCordKey("bungeeKey"),
+	HasJobs("hasJobs");
 	
 	public String databaseColName;
 	

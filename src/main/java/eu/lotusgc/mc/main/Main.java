@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import eu.lotusgc.mc.misc.SyncServerdata;
 import net.luckperms.api.LuckPerms;
 

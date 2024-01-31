@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 
+import eu.lotusgc.mc.command.AfKCMD;
 import eu.lotusgc.mc.command.ChatClearCMD;
 import eu.lotusgc.mc.command.ClearLagCMD;
 import eu.lotusgc.mc.command.FlyCMD;
@@ -67,7 +68,6 @@ public class LotusManager {
 			
 			Main.main.getCommand("s").setExecutor(new OpenCommand());
 			Main.main.getCommand("profile").setExecutor(new OpenCommand());
-			Main.main.getCommand("gm").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("cc").setExecutor(new ChatClearCMD());
 			Main.main.getCommand("invsee").setExecutor(new InvseeCMD());
 			Main.main.getCommand("sethome").setExecutor(new Homesystem());
@@ -83,12 +83,15 @@ public class LotusManager {
 			Main.main.getCommand("weather").setExecutor(new WeatherCMD());
 			Main.main.getCommand("sb").setExecutor(new ScoreboardChangeCMD());
 			Main.main.getCommand("clearlag").setExecutor(new ClearLagCMD());
+			Main.main.getCommand("afk").setExecutor(new AfKCMD());
+			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
 			pm.registerEvents(new JoinLeaveEvent(), Main.main);
 			pm.registerEvents(new ScoreboardHandler(), Main.main);
 			pm.registerEvents(new FlyCMD(), Main.main);
+			pm.registerEvents(new AfKCMD(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
