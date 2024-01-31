@@ -68,7 +68,7 @@ public class LotusManager {
 			
 			Main.main.getCommand("s").setExecutor(new OpenCommand());
 			Main.main.getCommand("profile").setExecutor(new OpenCommand());
-			Main.main.getCommand("gm").setExecutor(new GamemodeCMD());
+			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("cc").setExecutor(new ChatClearCMD());
 			Main.main.getCommand("invsee").setExecutor(new InvseeCMD());
 			Main.main.getCommand("sethome").setExecutor(new Homesystem());

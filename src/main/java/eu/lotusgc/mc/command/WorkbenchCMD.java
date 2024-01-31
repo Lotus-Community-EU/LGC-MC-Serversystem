@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 
-@org.bukkit.plugin.java.annotation.command.Command(name="workbench", desc="Opens the Workbench at any location", permission="lgc.command.workbench", aliases= {"wb"})
 public class WorkbenchCMD implements CommandExecutor{
 
 	@Override

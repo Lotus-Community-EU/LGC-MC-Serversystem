@@ -10,7 +10,6 @@ import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.Prefix;
 
-@org.bukkit.plugin.java.annotation.command.Command(name="invsee")
 public class InvseeCMD implements CommandExecutor{
 
 	@Override
