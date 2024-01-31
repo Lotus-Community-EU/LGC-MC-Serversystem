@@ -21,6 +21,7 @@ public class JoinLeaveEvent implements Listener{
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
+		new ScoreboardHandler().setScoreboard(event.getPlayer());
 		event.setJoinMessage("§7[§a+§7] " + event.getPlayer().getDisplayName());
 		updateOnlineStatus(event.getPlayer().getUniqueId(), true);
 		timeMap.put(event.getPlayer().getUniqueId(), (System.currentTimeMillis() / 1000));
