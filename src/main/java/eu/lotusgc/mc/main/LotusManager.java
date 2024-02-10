@@ -16,6 +16,7 @@ import eu.lotusgc.mc.command.InvseeCMD;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.ScoreboardChangeCMD;
+import eu.lotusgc.mc.command.SpawnSystem;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
@@ -87,6 +88,7 @@ public class LotusManager {
 			Main.main.getCommand("clearlag").setExecutor(new ClearLagCMD());
 			Main.main.getCommand("afk").setExecutor(new AfKCMD());
 			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
+			Main.main.getCommand("setspawn").setExecutor(new SpawnSystem());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);

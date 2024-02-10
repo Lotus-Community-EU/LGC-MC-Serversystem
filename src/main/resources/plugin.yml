@@ -27,4 +27,5 @@ commands:
     sb:
     clearlag:
     afk:
+    setspawn:
     
