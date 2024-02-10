@@ -18,6 +18,7 @@ public class Main extends JavaPlugin{
 	public void onEnable() {
 		main = this;
 		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		Bukkit.getMessenger().registerOutgoingPluginChannel(this, "lgc:dccb");
 		logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		logger.setLevel(Level.ALL);
 		LotusManager mgr = new LotusManager();
