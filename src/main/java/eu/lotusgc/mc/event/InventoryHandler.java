@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
+import eu.lotusgc.mc.command.SpawnSystem;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.InputType;
@@ -103,9 +105,9 @@ public class InventoryHandler implements Listener{
 				}
 			}else {
 				if(itemName.equalsIgnoreCase(navi_spawn)) {
-					//Location spawn = SpawnSystem.getSpawn("mainSpawn");
+					Location spawn = SpawnSystem.getSpawn("mainSpawn");
 					player.closeInventory();
-					//player.teleport(spawn);
+					player.teleport(spawn);
 				}
 			}
 		}else if(event.getView().getTitle().equalsIgnoreCase(language_title)) {

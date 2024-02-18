@@ -27,4 +27,8 @@ commands:
     sb:
     clearlag:
     afk:
+    setspawn:
+    tp:
+    tphere:
+    tpall:
     
