@@ -25,7 +25,7 @@ public class SyncServerdata {
 			public void run() {
 				LotusController lc = new LotusController();
 				try {
-					PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_serverstats SET currentPlayers = ?, currentStaffs = ?, maxPlayers = ?, ram_usage = ?, ram_alloc = ?, tps = ?, version = ?, lastUpdated = ? WHERE servername = ?");
+					PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_serverstats SET currentPlayers = ?, currentStaffs = ?, maxPlayers = ?, ram_usage = ?, ram_alloc = ?, tps = ?, version = ?, lastUpdated = ?, playerCapacity = ? WHERE servername = ?");
 					int allPlayers = 0;
 					int staffPlayers = 0;
 					for(Player all : Bukkit.getOnlinePlayers()) {
@@ -42,7 +42,8 @@ public class SyncServerdata {
 					ps.setString(6, formatDouble());
 					ps.setString(7, Bukkit.getBukkitVersion().split("-")[0]);
 					ps.setLong(8, System.currentTimeMillis());
-					ps.setString(9, lc.getServerName());
+					ps.setLong(9, Math.round(100.0 / Bukkit.getMaxPlayers() * allPlayers));
+					ps.setString(10, lc.getServerName());
 					ps.executeUpdate();
 				} catch (SQLException e) {
 					e.printStackTrace();
