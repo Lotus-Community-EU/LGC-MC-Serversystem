@@ -263,9 +263,9 @@ public class ScoreboardHandler implements Listener{
 			String world = "";
 			if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
 				world = "§aOverworld";
-			}else if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+			}else if(player.getWorld().getEnvironment() == World.Environment.NETHER) {
 				world = "§cNether";
-			}else if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+			}else if(player.getWorld().getEnvironment() == World.Environment.THE_END) {
 				world = "§0The End";
 			}
 			event.setFormat("§7[" + world + "§7] " + player.getDisplayName() + " §7(" + lc.getPlayerData(player, Playerdata.LotusChangeID)+ "): " + message);
