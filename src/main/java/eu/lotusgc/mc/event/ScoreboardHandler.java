@@ -3,13 +3,22 @@ package eu.lotusgc.mc.event;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -114,20 +123,109 @@ public class ScoreboardHandler implements Listener{
 			o.getScore("§cunsupported.").setScore(0);
 		}else if(sbState == 6) {
 			//servers and each players
-			o.getScore("§cView").setScore(1);
-			o.getScore("§cunsupported.").setScore(0);
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM mc_serverstats ORDER BY ai_id ASC");
+				ResultSet rs = ps.executeQuery();
+				while(rs.next()) {
+					if(rs.getBoolean("isOnline") && !rs.getBoolean("isHybrid")) {
+						o.getScore(rs.getString("displayname") + "§7: " + translatePercentIntoColorCode(rs.getInt("playerCapacity")) + rs.getInt("currentPlayers")).setScore(rs.getInt("ai_id"));
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}else if(sbState == 7) {
 			//world info
-			o.getScore("§cView").setScore(1);
-			o.getScore("§cunsupported.").setScore(0);
+			Location location = player.getLocation();
+			DecimalFormat dF = new DecimalFormat("#.##");
+			o.getScore("§aLocation Info").setScore(8);
+			o.getScore("§7§a").setScore(7);
+			o.getScore("§7Server: §a" + lc.getServerName()).setScore(6);
+			o.getScore("§7World: §a" + location.getWorld().getName()).setScore(5);
+			o.getScore("§7Weather: §a" + parseWorldWeather(location.getWorld())).setScore(4);
+			o.getScore("§7Time: §a" + parseTimeWorld(location.getWorld().getTime())).setScore(3);
+			o.getScore("§7x: §a" + dF.format(location.getX())).setScore(2);
+			o.getScore("§7Y: §a" + dF.format(location.getY())).setScore(1);
+			o.getScore("§7Z: §a" + dF.format(location.getZ())).setScore(0);
 		}else if(sbState == 8) {
 			//playerradar
-			o.getScore("§cView").setScore(1);
-			o.getScore("§cunsupported.").setScore(0);
+			List<String> playerRadar = new ArrayList<>();
+			int players = 0;
+			double fenceSize = 0.0;
+			if(player.hasPermission("lgc.isStaff") || player.hasPermission("lgc.isPremium")) {
+				fenceSize = 512.0;
+			}else {
+				fenceSize = 128.0;
+			}
+			for(Player all : Bukkit.getOnlinePlayers()) {
+				double dist = player.getLocation().distance(all.getLocation());
+				DecimalFormat dF = new DecimalFormat("#");
+				if(dist >= 0.25 && dist <= fenceSize) {
+					players++;
+					playerRadar.add("§6" + dF.format(dist) + "§7 :§a " + all.getCustomName());
+					if(players > 14) break;
+				}
+			}
+			if(!playerRadar.isEmpty()) {
+				Collections.sort(playerRadar);
+				int score = 0;
+				o.getScore("§7Players nearby (§6" + fenceSize + "§7m): §6" + playerRadar.size()).setScore(15);
+				for(String string : playerRadar) {
+					o.getScore(string).setScore(score);
+					score++;
+				}
+				playerRadar.clear();
+			}else {
+				o.getScore("§cNo Players nearby!").setScore(0);
+			}
 		}else if(sbState == 9) {
 			//entityradar
-			o.getScore("§cView").setScore(1);
-			o.getScore("§cunsupported.").setScore(0);
+			List<String> entityRadar = new ArrayList<>();
+			double fenceSize = 0.0;
+			ChatColor cc = null;
+			if(player.hasPermission("lgc.isStaff") || player.hasPermission("lgc.isPremium")) {
+				fenceSize = 64.0;
+				cc = ChatColor.RED;
+			}else {
+				fenceSize = 32.0;
+				cc = ChatColor.GOLD;
+			}
+			int entities = 0;
+			List<Entity> entity = player.getNearbyEntities(fenceSize, fenceSize, fenceSize);
+			for(Entity ent : entity) {
+				if(ent instanceof LivingEntity) {
+					entities++;
+					double dist = player.getLocation().distance(ent.getLocation());
+					DecimalFormat dF = new DecimalFormat("#");
+					boolean isMonster = false;
+					if(ent instanceof Monster) {
+						isMonster = true;
+					}
+					if(ent.isFrozen()) {
+						entityRadar.add("§6" + dF.format(dist) + "§7m : " + translateBooleanCustom(isMonster, "§cyes", "§ano") + " §7: §f" + ent.getType().toString());
+					}else if(ent.isInWater()) {
+						entityRadar.add("§6" + dF.format(dist) + "§7m : " + translateBooleanCustom(isMonster, "§cyes", "§ano") + " §7: §b" + ent.getType().toString());
+					}else if(!ent.isOnGround()) {
+						entityRadar.add("§6" + dF.format(dist) + "§7m : " + translateBooleanCustom(isMonster, "§cyes", "§ano") + " §7: §3" + ent.getType().toString());
+					}else {
+						entityRadar.add("§6" + dF.format(dist) + "§7m : " + translateBooleanCustom(isMonster, "§cyes", "§ano") + " §7: §a" + ent.getType().toString());
+					}
+					if(entities > 13) break;
+				}
+			}
+			if(!entityRadar.isEmpty()) {
+				Collections.sort(entityRadar);
+				int score = 0;
+				o.getScore("§7Entities nearby: " + cc + entity.size()).setScore(15);
+				o.getScore("§6dist. §7: §chost. §7: §5ent.").setScore(14);
+				for(String s : entityRadar) {
+					o.getScore(s).setScore(score);
+					score++;
+				}
+				entityRadar.clear();
+			}else {
+				o.getScore("§cNo entities nearby.").setScore(0);
+			}
 		}
 		player.setScoreboard(sb);
 		
@@ -263,9 +361,9 @@ public class ScoreboardHandler implements Listener{
 			String world = "";
 			if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
 				world = "§aOverworld";
-			}else if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+			}else if(player.getWorld().getEnvironment() == World.Environment.NETHER) {
 				world = "§cNether";
-			}else if(player.getWorld().getEnvironment() == World.Environment.NORMAL) {
+			}else if(player.getWorld().getEnvironment() == World.Environment.THE_END) {
 				world = "§0The End";
 			}
 			event.setFormat("§7[" + world + "§7] " + player.getDisplayName() + " §7(" + lc.getPlayerData(player, Playerdata.LotusChangeID)+ "): " + message);
@@ -339,7 +437,6 @@ public class ScoreboardHandler implements Listener{
 	}
 	
 	//needs World#getTime()
-	@SuppressWarnings("unused")
 	private String parseTimeWorld(long time) {
 		long gameTime = time;
 		long hours = gameTime / 1000 + 6;
@@ -355,6 +452,21 @@ public class ScoreboardHandler implements Listener{
 		String mm = "0" + minutes;
 		mm = mm.substring(mm.length() - 2, mm.length());
 		return hours + ":" + mm + " " + ampm;
+	}
+	
+	private String parseWorldWeather(World world) {
+		if(world.isThundering() && world.hasStorm()) {
+			//thunder
+			return "Thundering";
+		}else if(!world.isThundering() && world.hasStorm()) {
+			//rain only
+			return "Storming";
+		}else if(!world.isThundering() && !world.hasStorm()) {
+			//clear
+			return "Clear";
+		}else {
+			return "UK";
+		}
 	}
 	
 	private String returnPrefix(String role, RankType type) {
@@ -395,6 +507,32 @@ public class ScoreboardHandler implements Listener{
 		SIDEBOARD,
 		CHAT,
 		TEAM
+	}
+	
+	private String translatePercentIntoColorCode(int input) {
+		if(input >= 0 && input <= 19) {
+			return "§2";
+		}else if(input >= 20 && input <= 39) {
+			return "§a";
+		}else if(input >= 40 && input <= 59) {
+			return "§e";
+		}else if(input >= 60 && input <= 79) {
+			return "§6";
+		}else if(input >= 80 && input <= 89) {
+			return "§c";
+		}else if(input >= 90 && input <= 100) {
+			return "§4";
+		}else {
+			return "§9";
+		}
+	}
+	
+	private String translateBooleanCustom(boolean input, String positive, String negative) {
+		if(input) {
+			return positive;
+		}else {
+			return negative;
+		}
 	}
 	
 	public void startScheduler(int delay, int sideboardRefresh, int tabRefresh) {

@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -337,6 +338,18 @@ public class LotusController {
 		im.setDisplayName(fancyName);
 		is.setItemMeta(im);
 		return is;
+	}
+	
+	public ItemStack wt_Item(Material mat, String dpname, World world) {
+		List<String> lore = new ArrayList<>();
+		ItemStack item = new ItemStack(mat, 1);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(dpname);
+		lore.add("§7Current Players on");
+		lore.add("§a" + dpname + "§7: §a" + world.getPlayers().size());
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		return item;
 	}
 	
 	// < - - - ENC OF THE ITEMSTACKS - - - >

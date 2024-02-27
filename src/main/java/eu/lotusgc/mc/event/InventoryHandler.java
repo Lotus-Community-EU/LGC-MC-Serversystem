@@ -30,11 +30,6 @@ public class InventoryHandler implements Listener{
 	
 	public static String navi_title = "§aNavigator";
 	public static String navi_spawn = "§6Spawn";
-	public static String navi_creative = "§eCreative";
-	public static String navi_survival = "§cSurvival";
-	public static String navi_skyblock = "§7§fSky§2Block";
-	public static String navi_gameslobby = "§dGameslobby";
-	public static String navi_farmserver = "§9Farmserver";
 	
 	public static String language_title = "§6Languages";
 	
@@ -42,24 +37,52 @@ public class InventoryHandler implements Listener{
 	static String userProfile_resetProfile = "§4Reset Profile";
 	static String userProfile_ownStats = "%player%§7's Profile";
 	
+	static String wt_title = "§2World§aTeleporter";
+	static String wt_s_free = "§aFreebuild";
+	static String wt_s_plot = "§aPlotworld";
+	static String wt_f_ow = "§aOverworld";
+	static String wt_f_nt = "§cNether";
+	static String wt_f_te = "§8The End";
+	
 	public static void setNavigatorInventory(Player player) {
 		Inventory mainInventory = Bukkit.createInventory(null, 3*9, navi_title);
 		LotusController lc = new LotusController();
-		for(int i = 0; i < 26; i++) {
+		for(int i = 0; i < 27; i++) {
 			mainInventory.setItem(i, lc.defItem(Material.LIME_STAINED_GLASS_PANE, "§0", 1));
 		}
 		mainInventory.setItem(2, lc.naviServerItem(Material.RED_BED, "Gameslobby"));
 		mainInventory.setItem(6, lc.naviServerItem(Material.NETHERITE_AXE, "Survival"));
 		mainInventory.setItem(10, lc.naviServerItem(Material.GRASS_BLOCK, "SkyBlock"));
-		mainInventory.setItem(13, lc.defItem(Material.EMERALD, navi_spawn, 1));
+		if(lc.getServerName().equalsIgnoreCase("Survival") || lc.getServerName().equalsIgnoreCase("Farmserver")) {
+			mainInventory.setItem(12, lc.defItem(Material.RECOVERY_COMPASS, wt_title, 1));
+			mainInventory.setItem(14, lc.defItem(Material.EMERALD, navi_spawn, 1));
+		}else {
+			mainInventory.setItem(13, lc.defItem(Material.EMERALD, navi_spawn, 1));
+		}
 		mainInventory.setItem(16, lc.naviServerItem(Material.GOLDEN_HOE, "Farmserver"));
 		mainInventory.setItem(20, lc.naviServerItem(Material.WOODEN_AXE, "Staffserver"));
 		mainInventory.setItem(24, lc.naviServerItem(Material.DIAMOND_PICKAXE, "Creative"));
 		player.openInventory(mainInventory);
 	}
 	
+	public static void setWorldTPInventory(Player player) {
+		Inventory worldtp = Bukkit.createInventory(null, 1*9, wt_title);
+		LotusController lc = new LotusController();
+		if(lc.getServerName().equalsIgnoreCase("Survival")) {
+			worldtp.setItem(2, lc.wt_Item(Material.GRASS_BLOCK, wt_s_free, Bukkit.getWorld("world")));
+			worldtp.setItem(6, lc.wt_Item(Material.GRASS_BLOCK, wt_s_plot, Bukkit.getWorld("plotworld")));
+		}else if(lc.getServerName().equalsIgnoreCase("Farmserver")) {
+			worldtp.setItem(2, lc.wt_Item(Material.GRASS_BLOCK, wt_f_ow, Bukkit.getWorld("world")));
+			worldtp.setItem(4, lc.wt_Item(Material.NETHERRACK, wt_f_nt, Bukkit.getWorld("world_nether")));
+			worldtp.setItem(6, lc.wt_Item(Material.GRASS_BLOCK, wt_f_te, Bukkit.getWorld("world_the_end")));
+		}
+		player.openInventory(worldtp);
+	}
+	
 	public static void profileSettings(Player player) {
 		Inventory mainInventory = Bukkit.createInventory(null, 9*3, userProfile_title);
+		LotusController lc = new LotusController();
+		mainInventory.setItem(26, lc.defItem(Material.BOOK, language_title, 1));
 		player.openInventory(mainInventory);
 	}
 	
@@ -92,15 +115,33 @@ public class InventoryHandler implements Listener{
 			HashMap<String, String> fancyNames = getServerFancynames();
 			if(fancyNames.containsKey(itemName)) {
 				String bungeeName = fancyNames.get(itemName);
-				if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.OnlineStatus, InputType.BungeeKey))){
-					if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.LockedStatus, InputType.BungeeKey))) {
-						if(player.hasPermission("lgc.bypassServerlock")) {
-							sendPlayerToServer(player, itemName, bungeeName, lc);
-						}else {
-							Main.logger.info(player.getName() + " tried to join a locked server.");
+				if(itemName.equalsIgnoreCase("staffserver")) {
+					if(player.hasPermission("lgc.joinStaffserver")) {
+						if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.OnlineStatus, InputType.BungeeKey))){
+							if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.LockedStatus, InputType.BungeeKey))) {
+								if(player.hasPermission("lgc.bypassServerlock")) {
+									sendPlayerToServer(player, itemName, bungeeName, lc);
+								}else {
+									Main.logger.info(player.getName() + " tried to join a locked server.");
+								}
+							}else {
+								sendPlayerToServer(player, itemName, bungeeName, lc);
+							}
 						}
 					}else {
-						sendPlayerToServer(player, itemName, bungeeName, lc);
+						lc.noPerm(player, "lgc.joinStaffserver");
+					}
+				}else {
+					if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.OnlineStatus, InputType.BungeeKey))){
+						if(lc.translateBoolean(lc.getServerData(bungeeName, Serverdata.LockedStatus, InputType.BungeeKey))) {
+							if(player.hasPermission("lgc.bypassServerlock")) {
+								sendPlayerToServer(player, itemName, bungeeName, lc);
+							}else {
+								Main.logger.info(player.getName() + " tried to join a locked server.");
+							}
+						}else {
+							sendPlayerToServer(player, itemName, bungeeName, lc);
+						}
 					}
 				}
 			}else {
@@ -108,6 +149,9 @@ public class InventoryHandler implements Listener{
 					Location spawn = SpawnSystem.getSpawn("mainSpawn");
 					player.closeInventory();
 					player.teleport(spawn);
+				}else if(itemName.equalsIgnoreCase(wt_title)) {
+					player.closeInventory();
+					setWorldTPInventory(player);
 				}
 			}
 		}else if(event.getView().getTitle().equalsIgnoreCase(language_title)) {
@@ -122,6 +166,45 @@ public class InventoryHandler implements Listener{
 			}else {
 				//Error whilst updating to language %language%
 				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.languageInventory.error").replace("%language%", itemName));
+			}
+		}else if(event.getView().getTitle().equalsIgnoreCase(wt_title)) {
+			event.setCancelled(true);
+			LotusController lc = new LotusController();
+			if(event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) return;
+			String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+			if(lc.getServerName().equals("Farmserver")) {
+				if(itemName.equals(wt_f_ow)) {
+					Location spawn = SpawnSystem.getSpawn("mainSpawn");
+					player.closeInventory();
+					player.teleport(spawn);
+				}else if(itemName.equals(wt_f_nt)) {
+					Location spawn = SpawnSystem.getSpawn("netherSpawn");
+					player.closeInventory();
+					player.teleport(spawn);
+				}else if(itemName.equals(wt_f_te)) {
+					Location spawn = SpawnSystem.getSpawn("theendSpawn");
+					player.closeInventory();
+					player.teleport(spawn);
+				}
+			}else if(lc.getServerName().equals("Survival")) {
+				if(itemName.equals(wt_s_free)) {
+					Location spawn = SpawnSystem.getSpawn("freebuildSpawn");
+					player.closeInventory();
+					player.teleport(spawn);
+				}else if(itemName.equals(wt_s_plot)) {
+					Location spawn = SpawnSystem.getSpawn("plotworldSpawn");
+					player.closeInventory();
+					player.teleport(spawn);
+				}
+			}
+		}else if(event.getView().getTitle().equalsIgnoreCase(userProfile_title)) {
+			event.setCancelled(true);
+			if(event.getCurrentItem() == null || event.getCurrentItem().getItemMeta() == null) return;
+			String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+			if(itemName.equals(language_title)) {
+				event.setCancelled(true);
+				player.closeInventory();
+				setLanguageInventory(player);
 			}
 		}
 	}

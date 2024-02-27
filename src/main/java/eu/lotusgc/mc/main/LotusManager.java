@@ -22,6 +22,7 @@ import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
 import eu.lotusgc.mc.event.ChatBridgeExtSender;
+import eu.lotusgc.mc.event.ColorSigns;
 import eu.lotusgc.mc.event.InventoryHandler;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
@@ -102,6 +103,7 @@ public class LotusManager {
 			pm.registerEvents(new AfKCMD(), Main.main);
 			pm.registerEvents(new InventoryHandler(), Main.main);
 			pm.registerEvents(new ChatBridgeExtSender(), Main.main);
+			pm.registerEvents(new ColorSigns(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
