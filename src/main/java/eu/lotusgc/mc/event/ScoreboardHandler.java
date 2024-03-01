@@ -255,7 +255,7 @@ public class ScoreboardHandler implements Listener{
 			//Lotus Internal
 			String nick = lc.getPlayerData(all, Playerdata.Nick);
 			String clan = lc.getPlayerData(all, Playerdata.Clan);
-			String id = lc.getPlayerData(player, Playerdata.LotusChangeID);
+			String id = lc.getPlayerData(all, Playerdata.LotusChangeID);
 			if(nick.equalsIgnoreCase("none")) {
 				all.setCustomName(all.getName());
 			}else {

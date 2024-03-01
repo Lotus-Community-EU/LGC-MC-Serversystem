@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
-import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.MySQL;
 
 public class KillStats implements Listener{
@@ -37,7 +36,6 @@ public class KillStats implements Listener{
 		Entity damager = event.getDamager();
 		Entity vic = event.getEntity();
 		dmg.put(vic.getUniqueId(), damager.getUniqueId());
-		Main.logger.info("EDBEE triggered - Causer " + damager.getType().toString() + " harmed " + vic.getType().toString());
 	}
 	
 	@EventHandler

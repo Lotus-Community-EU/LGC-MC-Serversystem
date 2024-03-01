@@ -27,6 +27,7 @@ import eu.lotusgc.mc.event.InventoryHandler;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
+import eu.lotusgc.mc.event.ShopHandler;
 import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.SyncServerdata;
@@ -104,6 +105,7 @@ public class LotusManager {
 			pm.registerEvents(new InventoryHandler(), Main.main);
 			pm.registerEvents(new ChatBridgeExtSender(), Main.main);
 			pm.registerEvents(new ColorSigns(), Main.main);
+			pm.registerEvents(new ShopHandler(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}

@@ -3,6 +3,8 @@ package eu.lotusgc.mc.ext;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -30,6 +32,7 @@ import org.bukkit.potion.PotionType;
 
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.InputType;
+import eu.lotusgc.mc.misc.Money;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
 import eu.lotusgc.mc.misc.Prefix;
@@ -355,32 +358,30 @@ public class LotusController {
 	// < - - - ENC OF THE ITEMSTACKS - - - >
 	// < - - - BEGIN OF THE MONEY API - - - >
 	
-	public double getPocketMoney(Player player) {
+	public double getMoney(Player player, Money type) {
 		double money = 0.0;
-		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT money_pocket FROM mc_users WHERE mcuuid = ?");
-			ps.setString(1, player.getUniqueId().toString());
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
-				money = rs.getDouble("money_pocket");
+		if(type == Money.BANK) {
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT money_bank FROM mc_users WHERE mcuuid = ?");
+				ps.setString(1, player.getUniqueId().toString());
+				ResultSet rs = ps.executeQuery();
+				if(rs.next()) {
+					money = rs.getDouble("money_bank");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return money;
-	}
-	
-	public double getBankMoney(Player player) {
-		double money = 0.0;
-		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT money_bank FROM mc_users WHERE mcuuid = ?");
-			ps.setString(1, player.getUniqueId().toString());
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
-				money = rs.getDouble("money_bank");
+		}else if(type == Money.POCKET) {
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT money_pocket FROM mc_users WHERE mcuuid = ?");
+				ps.setString(1, player.getUniqueId().toString());
+				ResultSet rs = ps.executeQuery();
+				if(rs.next()) {
+					money = rs.getDouble("money_pocket");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		return money;
 	}
@@ -405,26 +406,47 @@ public class LotusController {
 		//Automatic true, as upon joining the server everything will be created in database - thus also has an account!
 	}
 	
-	public void setBankMoney(Player player, double moneyToSet) {
-		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET money_bank = ? WHERE mcuuid = ?");
-			ps.setDouble(1, moneyToSet);
-			ps.setString(2, player.getUniqueId().toString());
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public void setMoney(Player player, double money, Money type) {
+		BigDecimal dec = new BigDecimal(money).setScale(2, RoundingMode.DOWN);
+		if(type == Money.BANK) {
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET money_bank = ? WHERE mcuuid = ?");
+				ps.setDouble(1, dec.doubleValue());
+				ps.setString(2, player.getUniqueId().toString());
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}else if(type == Money.POCKET) {
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET money_pocket = ? WHERE mcuuid = ?");
+				ps.setDouble(1, dec.doubleValue());
+				ps.setString(2, player.getUniqueId().toString());
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public void setPocketMoney(Player player, double moneyToSet) {
-		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET money_pocket = ? WHERE mcuuid = ?");
-			ps.setDouble(1, moneyToSet);
-			ps.setString(2, player.getUniqueId().toString());
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public void addMoney(Player player, double moneyToAdd, Money type) {
+		double oldMoney = getMoney(player, type);
+		double newMoney = (oldMoney + moneyToAdd);
+		setMoney(player, newMoney, type);
+	}
+	
+	//if return is true, enough funds were there and a transaction was made; if false, no transaction was made and no money was removed.
+	public boolean removeMoney(Player player, double moneyToRemove, Money type) {
+		boolean hadEnoughFunds = false;
+		double oldMoney = getMoney(player, type);
+		if(moneyToRemove > oldMoney) {
+			hadEnoughFunds = false;
+		}else {
+			double newMoney = (oldMoney - moneyToRemove);
+			setMoney(player, newMoney, type);
+			hadEnoughFunds = true;
 		}
+		return hadEnoughFunds;
 	}
 	
 	public void setInterestLevel(Player player, int newInterestLevel) {
@@ -436,6 +458,11 @@ public class LotusController {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean hasEnoughFunds(Player player, double moneyToCheck, Money type) {
+		double current = getMoney(player, type);
+		return (current > moneyToCheck);
 	}
 	
 	// < - - - END OF THE MONEY API - - - >
