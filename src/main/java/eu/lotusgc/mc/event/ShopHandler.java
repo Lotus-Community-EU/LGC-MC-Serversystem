@@ -60,7 +60,8 @@ public class ShopHandler implements Listener {
 						int maxAmount = material.getMaxStackSize();
 						if(amount > maxAmount) {
 							amount = maxAmount;
-							player.sendMessage("item can only be stacked up to " + maxAmount + " items!!!!!!!");
+							//player.sendMessage("item can only be stacked up to " + maxAmount + " items!!!!!!!");
+							player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shop.create.itemAmountInfo").replace("%maxAmount%", maxAmount + "").replace("%item%", material.toString().toUpperCase()));
 						}
 						String l3 = event.getLine(3);
 						boolean isBuySell = false;
