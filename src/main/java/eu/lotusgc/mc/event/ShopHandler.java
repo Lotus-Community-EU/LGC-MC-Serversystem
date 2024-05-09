@@ -22,7 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.Money;
 import eu.lotusgc.mc.misc.MySQL;

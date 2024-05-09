@@ -28,7 +28,6 @@ import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
 import eu.lotusgc.mc.event.ShopHandler;
-import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.SyncServerdata;
 import net.luckperms.api.LuckPerms;

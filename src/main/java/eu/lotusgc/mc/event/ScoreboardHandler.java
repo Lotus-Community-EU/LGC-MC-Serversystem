@@ -34,7 +34,7 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 import eu.lotusgc.mc.command.AfKCMD;
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.ClearLag;
 import eu.lotusgc.mc.misc.MySQL;

@@ -1,4 +1,4 @@
-package eu.lotusgc.mc.ext;
+package eu.lotusgc.mc.main;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,7 +30,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionType;
 
-import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.InputType;
 import eu.lotusgc.mc.misc.Money;
 import eu.lotusgc.mc.misc.MySQL;

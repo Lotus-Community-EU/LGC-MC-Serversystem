@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.Prefix;
 
