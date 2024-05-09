@@ -19,7 +19,8 @@ public enum Playerdata {
 	MoneyInterestLevel("money_interestLevel"),
 	Language("language"),
 	CustomTimeFormat("customTimeFormat"),
-	CustomDateFormat("customDateFormat");
+	CustomDateFormat("customDateFormat"),
+	TimeZone("timeZone"); //Will be determined automatically upon joining.
 	
 	public String playerData;
 	
