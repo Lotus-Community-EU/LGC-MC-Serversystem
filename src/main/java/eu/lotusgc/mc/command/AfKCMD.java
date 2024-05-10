@@ -14,7 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 
 public class AfKCMD implements Listener, CommandExecutor{

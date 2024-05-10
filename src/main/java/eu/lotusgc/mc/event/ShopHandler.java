@@ -5,10 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,12 +22,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSignOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
+import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.Money;
 import eu.lotusgc.mc.misc.MySQL;
+import eu.lotusgc.mc.misc.Prefix;
 import net.md_5.bungee.api.ChatColor;
 
 public class ShopHandler implements Listener {
+	
+	static HashMap<Player, Integer> states = new HashMap<>();
+	static HashMap<Player, Location> signs = new HashMap<>();
+	static HashMap<Integer, String> lines = new HashMap<>();
 	
 	/*
 	 *  Adminshop
@@ -43,7 +51,8 @@ public class ShopHandler implements Listener {
 		LotusController lc = new LotusController();
 		if(event.getLine(0).equalsIgnoreCase("[shop]")) {
 			if(player.hasPermission("lgc.event.adminshop.create")) {
-				Material material = Material.matchMaterial(event.getLine(1));
+				String l1 = event.getLine(1);
+				Material material = Material.matchMaterial(l1);
 				if(material != null) {
 					int amount = 1;
 					if(event.getLine(2).matches("^[0-9]+$")) {
@@ -51,7 +60,8 @@ public class ShopHandler implements Listener {
 						int maxAmount = material.getMaxStackSize();
 						if(amount > maxAmount) {
 							amount = maxAmount;
-							player.sendMessage("item can only be stacked up to " + maxAmount + " items!!!!!!!");
+							//player.sendMessage("item can only be stacked up to " + maxAmount + " items!!!!!!!");
+							player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shop.create.itemAmountInfo").replace("%maxAmount%", maxAmount + "").replace("%item%", material.toString().toUpperCase()));
 						}
 						String l3 = event.getLine(3);
 						boolean isBuySell = false;
@@ -85,7 +95,7 @@ public class ShopHandler implements Listener {
 				}
 			}
 		}
-	}
+	}	
 	
 	@EventHandler
 	public void onSignOpen(PlayerSignOpenEvent event) {
@@ -121,7 +131,8 @@ public class ShopHandler implements Listener {
 						String[] prices = getPrices(sign.getLocation(), lc.getServerName());
 						int sellPrice = 0;
 						if(prices[1].equalsIgnoreCase("-1")) {
-							player.sendMessage("you cant sell here!");
+							//player.sendMessage("you cant sell here!");
+							lc.sendMessageReady(player, "event.shopsign.sell.denied");
 						}else {
 							if(prices[1].matches("^[0-9]+$")) {
 								sellPrice = Integer.parseInt(prices[1]);
@@ -136,31 +147,27 @@ public class ShopHandler implements Listener {
 											if((invAmt - amt) == 0) {
 												player.getInventory().removeItem(is);
 												lc.addMoney(player, sellPrice, Money.POCKET);
-												player.sendMessage("Sold " + amt + " " + is1.getType().toString().toUpperCase() + " and got " + sellPrice + " loti--");
+												player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsign.sell.success").replace("%amount%", amt + "").replace("%item%", is1.getType().toString().toUpperCase()).replace("%income%", sellPrice + ""));
 											}else {
 												ItemStack clone = is1.clone();
 												clone.setAmount((invAmt - amt));
 												player.getInventory().removeItem(is);
 												player.getInventory().setItemInMainHand(clone);
 												lc.addMoney(player, sellPrice, Money.POCKET);
-												player.sendMessage("Sold " + amt + " " + is1.getType().toString().toUpperCase() + " and got " + sellPrice + " loti");
+												player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsign.sell.success").replace("%amount%", amt + "").replace("%item%", is1.getType().toString().toUpperCase()).replace("%income%", sellPrice + ""));
 											}
 										}else if(invAmt < amt) {
-											player.sendMessage("You need at least " + amt + " " + is.getType().toString().toUpperCase());
+											player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsign.sell.notenoughitemamount").replace("%amount%", amt + "").replace("%item%", is.getType().toString().toUpperCase()));
 										}
 									}else {
-										player.sendMessage("You need " + is.getType().toString().toUpperCase() + " to be able to sell here dumbfuck.");
+										player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsign.sell.itemnotpresent").replace("%item%", is.getType().toString().toUpperCase()));
 									}
 								}
 							}else {
-								player.sendMessage("errored.");
+								Main.logger.severe("ERRORED IN ShopHandler.java in else for price[1].match(\"\")");
 							}
 						}
-					}else {
-						player.sendMessage("mat null");
 					}
-				}else {
-					player.sendMessage("is not a shop sign (DBQ)");
 				}
 			}else if(action == Action.RIGHT_CLICK_BLOCK) {
 				//buy
@@ -171,22 +178,32 @@ public class ShopHandler implements Listener {
 						int buyPrice = 0;
 						if(prices[0].matches("^[0-9]+$")) {
 							buyPrice = Integer.parseInt(prices[0]);
+							String oldCount = sign.getTargetSide(player).getLine(2).substring(12);
+							int amt = Integer.parseInt(oldCount);
+							ItemStack is = new ItemStack(material, amt);
 							if(lc.hasEnoughFunds(player, buyPrice, Money.POCKET)) {
-								String oldCount = sign.getTargetSide(player).getLine(2).substring(12);
-								int amt = Integer.parseInt(oldCount);
-								ItemStack is = new ItemStack(material, amt);
 								lc.removeMoney(player, buyPrice, Money.POCKET);
 								player.getInventory().addItem(is);
+								player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsigns.buy.success").replace("%item%", is.getType().toString().toUpperCase()).replace("%amount%", amt + "").replace("%askingPrice%", buyPrice + ""));
 							}else {
-								player.sendMessage("geh arbeiten arschwixer");
+								player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "event.shopsigns.buy.notenoughfunds").replace("%currentBalance%", lc.getMoney(player, Money.POCKET) + "").replace("%askingPrice%", buyPrice + "").replace("%item%", is.getType().toString().toUpperCase()).replace("%amount%", amt + ""));
 							}
 						}else {
-							player.sendMessage("errored.");
+							Main.logger.severe("ERRORED IN ShopHandler.java in else for price[0].match(\"\")");
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	Sign getSignByLocation(Location location) {
+		Sign sign = null;
+		Block block = Bukkit.getWorld(location.getWorld().getName()).getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+		if(isSign(block.getType())) {
+			sign = (Sign) block.getState();
+		}
+		return sign;
 	}
 	
 	String[] getPrices(Location location, String server) {
@@ -297,5 +314,4 @@ public class ShopHandler implements Listener {
 		signs.add(Material.WARPED_SIGN);
 		return signs.contains(input);
 	}
-
 }

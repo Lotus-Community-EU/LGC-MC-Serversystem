@@ -6,7 +6,7 @@ import java.util.Date;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import eu.lotusgc.mc.ext.LotusController;
+import eu.lotusgc.mc.main.LotusController;
 
 public class ServerRestarter {
 	

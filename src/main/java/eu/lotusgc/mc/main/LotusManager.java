@@ -10,6 +10,7 @@ import eu.lotusgc.mc.command.AfKCMD;
 import eu.lotusgc.mc.command.ChatClearCMD;
 import eu.lotusgc.mc.command.ClearLagCMD;
 import eu.lotusgc.mc.command.FlyCMD;
+import eu.lotusgc.mc.command.GC_CMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
@@ -28,7 +29,6 @@ import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
 import eu.lotusgc.mc.event.ScoreboardHandler;
 import eu.lotusgc.mc.event.ShopHandler;
-import eu.lotusgc.mc.ext.LotusController;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.SyncServerdata;
 import net.luckperms.api.LuckPerms;
@@ -95,6 +95,7 @@ public class LotusManager {
 			Main.main.getCommand("tp").setExecutor(new TP_Command());
 			Main.main.getCommand("tphere").setExecutor(new TP_Command());
 			Main.main.getCommand("tpall").setExecutor(new TP_Command());
+			Main.main.getCommand("gc").setExecutor(new GC_CMD());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
