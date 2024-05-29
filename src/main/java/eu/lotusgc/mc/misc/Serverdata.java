@@ -12,7 +12,8 @@ public enum Serverdata {
 	RequiredJoinlevel("req_joinlevel"),
 	ServerPlayerCapacity("playerCapacity"),
 	BungeeCordKey("bungeeKey"),
-	HasJobs("hasJobs");
+	HasJobs("hasJobs"),
+	AllowPlayerInventorySync("allowInvSync");
 	
 	public String databaseColName;
 	

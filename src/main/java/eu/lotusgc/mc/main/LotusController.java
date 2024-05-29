@@ -3,6 +3,7 @@ package eu.lotusgc.mc.main;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -31,7 +32,10 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionType;
 
+import eu.lotusgc.mc.misc.DatabaseInventoryData;
 import eu.lotusgc.mc.misc.InputType;
+import eu.lotusgc.mc.misc.InventorySyncData;
+import eu.lotusgc.mc.misc.InventoryUtils;
 import eu.lotusgc.mc.misc.Money;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
@@ -652,6 +656,121 @@ public class LotusController {
 		lastSystemTime = System.nanoTime();
 		if(ManagementFactory.getOperatingSystemMXBean() instanceof com.sun.management.OperatingSystemMXBean) {
 			lastProcessCpuTime = ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuTime();
+		}
+	}
+	
+	
+	// INV SYNC Section
+	
+	public void onInvSyncJoinFunction(final Player player) {
+		final InventorySyncData syncData = new InventorySyncData();
+		backupAndReset(player, syncData);
+		DatabaseInventoryData data = getData(player);
+		setInventory(player, data, syncData);
+	}
+	
+	private void backupAndReset(Player player, InventorySyncData syncData) {
+		syncData.setBackupInventory(player.getInventory().getContents());
+		syncData.setBackupArmor(player.getInventory().getArmorContents());
+		player.setItemOnCursor(null);
+		player.getInventory().clear();
+		player.getInventory().setHelmet(null);
+		player.getInventory().setChestplate(null);
+		player.getInventory().setLeggings(null);
+		player.getInventory().setBoots(null);
+		player.updateInventory();
+	}
+	
+	public DatabaseInventoryData getData(Player player) {
+		try {
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT invSync_inv_main,invSync_inv_armor,invSync_xp FROM mc_users WHERE mcuuid = ?");
+			ps.setString(1, player.getUniqueId().toString());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) {
+				return new DatabaseInventoryData(rs.getString("invSync_inv_main"), rs.getString("invSync_inv_armor"), rs.getInt("invSync_xp"));
+			}else {
+				return null;
+			}
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	private void setInventory(final Player player, DatabaseInventoryData data, InventorySyncData syncData) {
+		if(!data.getRawInventory().matches("none")) {
+			player.getInventory().setContents(decodeItems(data.getRawInventory()));
+			player.sendMessage("synced maininv");
+		}else {
+			player.getInventory().setContents(syncData.getBackupInventory());
+			player.sendMessage("backup maininv used.");
+		}
+		if(!data.getRawArmor().matches("none")) {
+			player.getInventory().setArmorContents(decodeItems(data.getRawArmor()));
+			player.sendMessage("synced armor");
+		}else {
+			player.getInventory().setArmorContents(syncData.getBackupArmor());
+			player.sendMessage("backup armorinv used.");
+		}
+		player.setTotalExperience(data.getXP());
+		player.updateInventory();
+	}
+	
+	public void onDataSaveFunction(Player player, ItemStack[] inventory, ItemStack[] armor) {
+		String invS = "";
+		String armorS = "";
+		if(inventory != null) {
+			invS = encodeItems(inventory);
+		}
+		if(armor != null) {
+			armorS = encodeItems(armor);
+		}
+		setData(player, invS, armorS);
+	}
+	
+	public String encodeItems(ItemStack[] items) {
+		if(LotusManager.useProtocolLib) {
+			return InventoryUtils.saveModdedStacksData(items);
+		}else {
+			return InventoryUtils.itemStackArrayToBase64(items);
+		}
+		
+	}
+	
+	public ItemStack[] decodeItems(String data) {
+		if(LotusManager.useProtocolLib) {
+			ItemStack[] is = InventoryUtils.restoreModdedStacks(data);
+			if(is == null) {
+				try {
+					is = InventoryUtils.itemStackArrayFromBase64(data);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return is;
+		}else {
+			try {
+				return InventoryUtils.itemStackArrayFromBase64(data);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+	}
+	
+	public void setData(Player player, String inventory, String armor) {
+		try {
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET invSync_inv_main = ?, invSync_inv_armor = ?, invSync_xp = ? WHERE mcuuid = ?");
+			ps.setString(1, inventory);
+			ps.setString(2, armor);
+			ps.setInt(3, player.getTotalExperience());
+			ps.setString(4, player.getUniqueId().toString());
+			ps.executeUpdate();
+			Main.logger.info("setData has been triggered.");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }

@@ -5,15 +5,20 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import eu.lotusgc.mc.main.LotusController;
+import eu.lotusgc.mc.main.Main;
+import eu.lotusgc.mc.misc.InputType;
 import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
+import eu.lotusgc.mc.misc.Serverdata;
 
 public class JoinLeaveEvent implements Listener{
 	
@@ -21,14 +26,27 @@ public class JoinLeaveEvent implements Listener{
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		new ScoreboardHandler().setScoreboard(event.getPlayer());
-		event.setJoinMessage("§7[§a+§7] " + event.getPlayer().getDisplayName());
-		updateOnlineStatus(event.getPlayer().getUniqueId(), true);
-		timeMap.put(event.getPlayer().getUniqueId(), (System.currentTimeMillis() / 1000));
+		Player player = event.getPlayer();
+		LotusController lc = new LotusController();
+		new ScoreboardHandler().setScoreboard(player);
+		event.setJoinMessage("§7[§a+§7] " + player.getDisplayName());
+		updateOnlineStatus(player.getUniqueId(), true);
+		timeMap.put(player.getUniqueId(), (System.currentTimeMillis() / 1000));
+		boolean whitelistedServer = lc.translateBoolean(lc.getServerData(lc.getServerName(), Serverdata.AllowPlayerInventorySync, InputType.Servername));
+		if(whitelistedServer) {
+			Bukkit.getScheduler().runTaskLaterAsynchronously(Main.main, new Runnable() {
+				@Override
+				public void run() {
+					lc.onInvSyncJoinFunction(player);
+				}
+			}, 5L);
+		}
 	}
 	
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		LotusController lc = new LotusController();
 		event.setQuitMessage("§7[§c-§7] " + event.getPlayer().getDisplayName());
 		updateOnlineStatus(event.getPlayer().getUniqueId(), false);
 		if(timeMap.containsKey(event.getPlayer().getUniqueId())) {
@@ -37,6 +55,12 @@ public class JoinLeaveEvent implements Listener{
 			long oldPlayTime = getPlaytime(event.getPlayer());
 			long newPlayTime = (playtime + oldPlayTime);
 			updatePlaytime(event.getPlayer(), newPlayTime);
+		}
+		boolean whitelistedServer = lc.translateBoolean(lc.getServerData(lc.getServerName(), Serverdata.AllowPlayerInventorySync, InputType.Servername));
+		if(whitelistedServer) {
+			ItemStack[] inv = player.getInventory().getContents();
+			ItemStack[] armor = player.getInventory().getArmorContents();
+			lc.onDataSaveFunction(player, inv, armor);
 		}
 	}
 	
