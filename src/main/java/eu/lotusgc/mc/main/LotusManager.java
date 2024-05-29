@@ -38,6 +38,7 @@ public class LotusManager {
 	public static File mainFolder = new File("plugins/LotusGaming");
 	public static File mainConfig = new File("plugins/LotusGaming/config.yml");
 	public static File propsConfig = new File("plugins/LotusGaming/propertiesBackup.yml");
+	public static boolean useProtocolLib = false;
 	
 	//will be loaded as first upon plugin loading!
 		public void preInit() {
@@ -126,7 +127,12 @@ public class LotusManager {
 			new ScoreboardHandler().startScheduler(0, 40, 20);
 			InventoryHandler.loadServer();
 			
-			Main.luckPerms = (LuckPerms) Bukkit.getServer().getServicesManager().load(LuckPerms.class);
+			if(Bukkit.getPluginManager().getPlugin("LuckPerms")!=null) {
+				Main.luckPerms = (LuckPerms) Bukkit.getServer().getServicesManager().load(LuckPerms.class);
+			}
+			if(Bukkit.getPluginManager().getPlugin("ProtocolLib") != null) {
+				useProtocolLib = true;
+			}
 			
 			Bukkit.getConsoleSender().sendMessage("§aPost-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
