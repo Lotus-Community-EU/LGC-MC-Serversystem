@@ -702,24 +702,18 @@ public class LotusController {
 	private void setInventory(final Player player, DatabaseInventoryData data, InventorySyncData syncData) {
 		if(!data.getRawInventory().matches("none")) {
 			player.getInventory().setContents(decodeItems(data.getRawInventory()));
-			player.sendMessage("synced maininv");
 		}else {
 			player.getInventory().setContents(syncData.getBackupInventory());
-			player.sendMessage("backup maininv used.");
 		}
 		if(!data.getRawArmor().matches("none")) {
 			player.getInventory().setArmorContents(decodeItems(data.getRawArmor()));
-			player.sendMessage("synced armor");
 		}else {
 			player.getInventory().setArmorContents(syncData.getBackupArmor());
-			player.sendMessage("backup armorinv used.");
 		}
 		if(!data.getRawEnderChestInventory().matches("none")) {
 			player.getEnderChest().setContents(decodeItems(data.getRawEnderChestInventory()));
-			player.sendMessage("synced enderchest");
 		}else {
 			player.getEnderChest().setContents(syncData.getBackupEnderChest());
-			player.sendMessage("backup enderchest used");
 		}
 		player.setExp(data.getXP());
 		player.setLevel(data.getLevel());
