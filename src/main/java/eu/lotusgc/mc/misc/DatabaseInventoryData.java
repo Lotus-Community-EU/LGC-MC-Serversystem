@@ -5,16 +5,24 @@ public class DatabaseInventoryData {
 	
 	private String rawInv;
 	private String rawAr;
-	private int xp;
+	private String rawECInv;
+	private float xp;
+	private int level;
 	
-	public DatabaseInventoryData(String rawInventory, String rawArmor, int xp) {
+	public DatabaseInventoryData(String rawInventory, String rawArmor, String rawEnderChestInventory, float xp, int level) {
 		this.rawInv = rawInventory;
 		this.rawAr = rawArmor;
+		this.rawECInv = rawEnderChestInventory;
 		this.xp = xp;
+		this.level = level;
 	}
 	
-	public int getXP() {
+	public float getXP() {
 		return xp;
+	}
+	
+	public int getLevel() {
+		return level;
 	}
 	
 	public String getRawArmor() {
@@ -23,6 +31,10 @@ public class DatabaseInventoryData {
 	
 	public String getRawInventory() {
 		return rawInv;
+	}
+	
+	public String getRawEnderChestInventory() {
+		return rawECInv;
 	}
 
 }
