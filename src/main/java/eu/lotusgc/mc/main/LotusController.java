@@ -672,6 +672,7 @@ public class LotusController {
 	private void backupAndReset(Player player, InventorySyncData syncData) {
 		syncData.setBackupInventory(player.getInventory().getContents());
 		syncData.setBackupArmor(player.getInventory().getArmorContents());
+		syncData.setBackupEnderChest(player.getEnderChest().getContents());
 		player.setItemOnCursor(null);
 		player.getInventory().clear();
 		player.getInventory().setHelmet(null);
@@ -683,11 +684,11 @@ public class LotusController {
 	
 	public DatabaseInventoryData getData(Player player) {
 		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT invSync_inv_main,invSync_inv_armor,invSync_xp FROM mc_users WHERE mcuuid = ?");
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT invSync_inv_main,invSync_inv_armor,invSync_xp,invSync_level,invSync_inv_enderchest FROM mc_users WHERE mcuuid = ?");
 			ps.setString(1, player.getUniqueId().toString());
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) {
-				return new DatabaseInventoryData(rs.getString("invSync_inv_main"), rs.getString("invSync_inv_armor"), rs.getInt("invSync_xp"));
+				return new DatabaseInventoryData(rs.getString("invSync_inv_main"), rs.getString("invSync_inv_armor"), rs.getString("invSync_inv_enderchest"), rs.getFloat("invSync_xp"), rs.getInt("invSync_level"));
 			}else {
 				return null;
 			}
@@ -713,20 +714,32 @@ public class LotusController {
 			player.getInventory().setArmorContents(syncData.getBackupArmor());
 			player.sendMessage("backup armorinv used.");
 		}
-		player.setTotalExperience(data.getXP());
+		if(!data.getRawEnderChestInventory().matches("none")) {
+			player.getEnderChest().setContents(decodeItems(data.getRawEnderChestInventory()));
+			player.sendMessage("synced enderchest");
+		}else {
+			player.getEnderChest().setContents(syncData.getBackupEnderChest());
+			player.sendMessage("backup enderchest used");
+		}
+		player.setExp(data.getXP());
+		player.setLevel(data.getLevel());
 		player.updateInventory();
 	}
 	
-	public void onDataSaveFunction(Player player, ItemStack[] inventory, ItemStack[] armor) {
+	public void onDataSaveFunction(Player player, ItemStack[] inventory, ItemStack[] armor, ItemStack[] enderChest) {
 		String invS = "";
 		String armorS = "";
+		String enderChestP = "";
 		if(inventory != null) {
 			invS = encodeItems(inventory);
 		}
 		if(armor != null) {
 			armorS = encodeItems(armor);
 		}
-		setData(player, invS, armorS);
+		if(enderChest != null) {
+			enderChestP = encodeItems(enderChest);
+		}
+		setData(player, invS, armorS, enderChestP);
 	}
 	
 	public String encodeItems(ItemStack[] items) {
@@ -760,13 +773,15 @@ public class LotusController {
 		
 	}
 	
-	public void setData(Player player, String inventory, String armor) {
+	public void setData(Player player, String inventory, String armor, String enderChest) {
 		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET invSync_inv_main = ?, invSync_inv_armor = ?, invSync_xp = ? WHERE mcuuid = ?");
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET invSync_inv_main = ?, invSync_inv_armor = ?, invSync_xp = ?, invSync_level = ?, invSync_inv_enderchest = ? WHERE mcuuid = ?");
 			ps.setString(1, inventory);
 			ps.setString(2, armor);
-			ps.setInt(3, player.getTotalExperience());
-			ps.setString(4, player.getUniqueId().toString());
+			ps.setFloat(3, player.getExp());
+			ps.setInt(4, player.getLevel());
+			ps.setString(5, enderChest);
+			ps.setString(6, player.getUniqueId().toString());
 			ps.executeUpdate();
 			Main.logger.info("setData has been triggered.");
 		} catch (SQLException e) {
