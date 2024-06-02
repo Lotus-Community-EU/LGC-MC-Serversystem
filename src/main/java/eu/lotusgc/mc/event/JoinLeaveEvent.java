@@ -60,7 +60,8 @@ public class JoinLeaveEvent implements Listener{
 		if(whitelistedServer) {
 			ItemStack[] inv = player.getInventory().getContents();
 			ItemStack[] armor = player.getInventory().getArmorContents();
-			lc.onDataSaveFunction(player, inv, armor);
+			ItemStack[] enderChest = player.getEnderChest().getStorageContents();
+			lc.onDataSaveFunction(player, inv, armor, enderChest);
 		}
 	}
 	
