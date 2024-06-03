@@ -7,12 +7,14 @@ public class InventorySyncData {
 	
 	private ItemStack[] backupInv;
 	private ItemStack[] backupAr;
+	private ItemStack[] enderChest;
 	private Boolean syncComplete;
 	
 	public InventorySyncData() {
 		this.backupInv = null;
 		this.backupAr = null;
 		this.syncComplete = false;
+		this.enderChest = null;
 	}
 	
 	public void setSyncStatus(boolean syncStatus) {
@@ -31,12 +33,20 @@ public class InventorySyncData {
 		return backupInv;
 	}
 	
+	public ItemStack[] getBackupEnderChest() {
+		return enderChest;
+	}
+	
 	public void setBackupInventory(ItemStack[] backupInventory) {
 		backupInv = backupInventory;
 	}
 	
 	public void setBackupArmor(ItemStack[] backupArmor) {
 		backupAr = backupArmor;
+	}
+	
+	public void setBackupEnderChest(ItemStack[] backupInventory) {
+		enderChest = backupInventory;
 	}
 
 }

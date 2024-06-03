@@ -26,15 +26,19 @@ public class SpawnSystem implements CommandExecutor{
 		}else {
 			Player player = (Player) sender;
 			LotusController lc = new LotusController();
-			if(args.length == 1) {
-				if(player.hasPermission("lgc.spawn.admin")) {
-					setSpawn(player.getLocation(), player, args[0]);
-					player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.spawn.set").replace("%spawn%", args[0]));
+			if(command.getName().equalsIgnoreCase("setspawn")) {
+				if(args.length == 1) {
+					if(player.hasPermission("lgc.spawn.admin")) {
+						setSpawn(player.getLocation(), player, args[0]);
+						player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.spawn.set").replace("%spawn%", args[0]));
+					}else {
+						lc.noPerm(player, "lgc.spawn.admin");
+					}
 				}else {
-					lc.noPerm(player, "lgc.spawn.admin");
+					player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + " §7/setspawn <name>");
 				}
-			}else {
-				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + " §7/setspawn <name>");
+			}else if(command.getName().equalsIgnoreCase("spawn")) {
+				player.teleport(getSpawn("main"));
 			}
 		}
 		return true;
