@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import eu.lotusgc.mc.command.SpawnSystem;
 import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.InputType;
@@ -40,6 +41,14 @@ public class JoinLeaveEvent implements Listener{
 					lc.onInvSyncJoinFunction(player);
 				}
 			}, 5L);
+		}
+		if(!player.hasPlayedBefore()) {
+			Bukkit.getScheduler().runTaskLaterAsynchronously(Main.main, new Runnable() {
+				@Override
+				public void run() {
+					player.teleport(SpawnSystem.getSpawn("main"));
+				}
+			}, 2L);
 		}
 	}
 	

@@ -93,6 +93,7 @@ public class LotusManager {
 			Main.main.getCommand("afk").setExecutor(new AfKCMD());
 			Main.main.getCommand("gamemode").setExecutor(new GamemodeCMD());
 			Main.main.getCommand("setspawn").setExecutor(new SpawnSystem());
+			Main.main.getCommand("spawn").setExecutor(new SpawnSystem());
 			Main.main.getCommand("tp").setExecutor(new TP_Command());
 			Main.main.getCommand("tphere").setExecutor(new TP_Command());
 			Main.main.getCommand("tpall").setExecutor(new TP_Command());
