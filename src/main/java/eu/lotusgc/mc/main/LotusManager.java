@@ -123,6 +123,8 @@ public class LotusManager {
 			lc.initPrefixSystem();
 			lc.loadServerIDName();
 			
+			JoinLeaveEvent.initRoles();
+			
 			SyncServerdata.startScheduler();
 			ScoreboardHandler.initRoles();
 			new ScoreboardHandler().startScheduler(0, 40, 20);
