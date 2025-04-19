@@ -67,6 +67,7 @@ public class ScoreboardHandler implements Listener{
 	 * 7 = World Info and Coordinates
 	 * 8 = View Players around you (normal = 500 blocks, premium = 1000, Admin and higher (2500 blocks))
 	 * 9 = View Entities (except Players) around you (normal 100 blocks, premium 250 blocks, Staffs general up to 500 blocks (only the nearest 10 will be listed anyway!)
+	 * 10 = VoIP Servers Infos
 	 */
 	
 	private static int sbSwitch = 0;
@@ -230,9 +231,21 @@ public class ScoreboardHandler implements Listener{
 			}else {
 				o.getScore("§cNo entities nearby.").setScore(0);
 			}
+		}else if(sbState == 10) {
+			try {
+				PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM bot_status WHERE isOnline = ?");
+				ps.setBoolean(1, true);
+				ResultSet rs = ps.executeQuery();
+				while(rs.next()) {
+					o.getScore("§a" + rs.getString("botDisplayname") + "§7: " + rs.getInt("servingUniqueMembers")).setScore(rs.getInt("ai_id"));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		player.setScoreboard(sb);
 		
+		Team owner = getTeam(sb, "owner", ChatColor.AQUA);
 		Team projlead = getTeam(sb, "projectlead", ChatColor.DARK_GRAY);
 		Team viceProjLead = getTeam(sb, "viceprojlead", ChatColor.DARK_GRAY);
 		Team staffmanager = getTeam(sb, "staffmanager", ChatColor.DARK_GRAY);
@@ -278,7 +291,11 @@ public class ScoreboardHandler implements Listener{
 				all.setPlayerListName("§9" + all.getCustomName() + " §7(§a" + id + "§7) §f" + clan);
 			}else {
 				// if player is not afk
-				if(user.getPrimaryGroup().equalsIgnoreCase("projectlead")) {
+				if(user.getPrimaryGroup().equalsIgnoreCase("owner")) {
+					owner.addEntry(all.getName());
+					all.setDisplayName(returnPrefix(user.getPrimaryGroup(), RankType.CHAT) + all.getCustomName());
+					all.setPlayerListName(returnPrefix(user.getPrimaryGroup(), RankType.TAB) + all.getCustomName() + " §7(§a" + id + "§7) §f" + clan);
+				}else if(user.getPrimaryGroup().equalsIgnoreCase("projectlead")) {
 					projlead.addEntry(all.getName());
 					all.setDisplayName(returnPrefix(user.getPrimaryGroup(), RankType.CHAT) + all.getCustomName());
 					all.setPlayerListName(returnPrefix(user.getPrimaryGroup(), RankType.TAB) + all.getCustomName() + " §7(§a" + id + "§7) §f" + clan);

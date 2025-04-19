@@ -17,8 +17,8 @@
 	
 	<developers>
 		<developer>
-			<id>ChrisWille2856</id>
-			<name>Christopher Wilhelm H.</name>
+			<id>MauriceLPs</id>
+			<name>Maurice Alexander H.</name>
 			<email>info@kitsoft.at</email>
 		</developer>
 		<developer>
@@ -29,7 +29,7 @@
 	</developers>
 
     <properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.21.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -70,7 +70,7 @@
         <dependency>
 			<groupId>com.comphenix.protocol</groupId>
 			<artifactId>ProtocolLib</artifactId>
-			<version>4.8.0</version>
+			<version>5.3.0</version>
 			<scope>provided</scope>
 		</dependency>
     </dependencies>

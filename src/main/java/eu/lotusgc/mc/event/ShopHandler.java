@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,13 +77,13 @@ public class ShopHandler implements Listener {
 						if(isBuySell) {
 							String[] split = l3.split(":");
 							event.setLine(0, "§cAdminshop");
-							event.setLine(1, "§6" + material.getKey().getKey().toUpperCase());
+							event.setLine(1, "§6" + Objects.requireNonNullElse(material.getKeyOrNull().getKey().toUpperCase(), "§cERROR!") );
 							event.setLine(2, "§7Amount: §a" + amount);
 							event.setLine(3, "§a" + split[0] + " §7| §c" + split[1]);
 							addShopSign(event.getBlock().getLocation(), material, amount, Double.parseDouble(split[0]), Double.parseDouble(split[1]), player, lc.getServerName());
 						}else {
 							event.setLine(0, "§cAdminshop");
-							event.setLine(1, "§6" + material.getKey().getKey().toUpperCase());
+							event.setLine(1, "§6" + Objects.requireNonNullElse(material.getKeyOrNull().getKey().toUpperCase(), "§cERROR!"));
 							event.setLine(2, "§7Amount: §a" + amount);
 							event.setLine(3, "§a" + l3);
 							addShopSign(event.getBlock().getLocation(), material, amount, Double.parseDouble(l3), -1, player, lc.getServerName());
@@ -234,7 +236,7 @@ public class ShopHandler implements Listener {
 			ps.setInt(4, location.getBlockX());
 			ps.setInt(5, location.getBlockY());
 			ps.setInt(6, location.getBlockZ());
-			ps.setString(7, material.getKey().getKey().toUpperCase());
+			ps.setString(7, Objects.requireNonNullElse(material.getKeyOrNull().getKey().toUpperCase(), "§cERROR!"));
 			ps.setInt(8, amount);
 			ps.setDouble(9, buyPrice);
 			ps.setDouble(10, sellPrice);
@@ -312,6 +314,9 @@ public class ShopHandler implements Listener {
 		signs.add(Material.WARPED_WALL_SIGN);
 		signs.add(Material.WARPED_WALL_HANGING_SIGN);
 		signs.add(Material.WARPED_SIGN);
+		signs.add(Material.PALE_OAK_WALL_SIGN);
+		signs.add(Material.PALE_OAK_WALL_HANGING_SIGN);
+		signs.add(Material.PALE_OAK_SIGN);
 		return signs.contains(input);
 	}
 }

@@ -52,10 +52,11 @@ public class ScoreboardChangeCMD implements CommandExecutor{
 				case "world": updateSB(player,7); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Worldinfo")); break;
 				case "players": updateSB(player, 8); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Players")); break;
 				case "entities": updateSB(player, 9); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Entities")); break;
-				default: player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities>"); break;
+				case "voip": updateSB(player, 10); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "VoIP-Service Info")); break;
+				default: player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities|voip>"); break;
 				}
 			}else {
-				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities>");
+				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities|voip>");
 			}
 		}
 		return true;

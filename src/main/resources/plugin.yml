@@ -1,8 +1,9 @@
 version: 1.0.1-BETA
-author: ChrisWille2856
+author: MauriceLPs
 name: LotusGamingSystem
 main: eu.lotusgc.mc.main.Main
-api-version: 1.20
+api-version: 1.21
+depend: [ProtocolLib, LuckPerms]
 
 commands:
     s:
@@ -33,4 +34,5 @@ commands:
     tphere:
     tpall:
     gc:
-    
+    backpack:
+        aliases: bp
