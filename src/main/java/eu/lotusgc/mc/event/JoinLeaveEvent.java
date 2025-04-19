@@ -88,7 +88,7 @@ public class JoinLeaveEvent implements Listener{
 				ps.setBoolean(1, status);
 				ps.setString(2, lc.getServerName());
 				ps.setString(3, retGroup(player));
-				ps.setString(3, player.getUniqueId().toString());
+				ps.setString(4, player.getUniqueId().toString());
 			}else {
 				ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET isOnline = ? WHERE mcuuid = ?");
 				ps.setBoolean(1, status);
@@ -115,6 +115,7 @@ public class JoinLeaveEvent implements Listener{
 			ps.setLong(1, newPlaytime);
 			ps.setString(2, player.getUniqueId().toString());
 			ps.executeUpdate();
+			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
