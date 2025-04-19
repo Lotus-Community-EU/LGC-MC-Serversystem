@@ -126,7 +126,7 @@ public class InventoryUtils {
 	        {
 	          itemStacks[i] = StreamSerializer.getDefault().deserializeItemStack(strings[i]);
 	        }
-	        catch (IOException e)
+	        catch (Exception e)
 	        {
 	          e.printStackTrace();
 	        }
