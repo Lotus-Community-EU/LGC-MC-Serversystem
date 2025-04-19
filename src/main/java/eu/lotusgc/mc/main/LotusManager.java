@@ -22,6 +22,7 @@ import eu.lotusgc.mc.command.TP_Command;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
 import eu.lotusgc.mc.command.WorkbenchCMD;
+import eu.lotusgc.mc.event.BackpackHandler;
 import eu.lotusgc.mc.event.ChatBridgeExtSender;
 import eu.lotusgc.mc.event.ColorSigns;
 import eu.lotusgc.mc.event.InventoryHandler;
@@ -98,6 +99,8 @@ public class LotusManager {
 			Main.main.getCommand("tphere").setExecutor(new TP_Command());
 			Main.main.getCommand("tpall").setExecutor(new TP_Command());
 			Main.main.getCommand("gc").setExecutor(new GC_CMD());
+			Main.main.getCommand("backpack").setExecutor(new OpenCommand());
+			Main.main.getCommand("bp").setExecutor(new OpenCommand());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
@@ -109,6 +112,7 @@ public class LotusManager {
 			pm.registerEvents(new ChatBridgeExtSender(), Main.main);
 			pm.registerEvents(new ColorSigns(), Main.main);
 			pm.registerEvents(new ShopHandler(), Main.main);
+			pm.registerEvents(new BackpackHandler(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}

@@ -684,11 +684,11 @@ public class LotusController {
 	
 	public DatabaseInventoryData getData(Player player) {
 		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT invSync_inv_main,invSync_inv_armor,invSync_xp,invSync_level,invSync_inv_enderchest FROM mc_users WHERE mcuuid = ?");
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT invSync_inv_main,invSync_inv_armor,invSync_xp,invSync_level,invSync_inv_enderchest,invSync_inv_backpack FROM mc_users WHERE mcuuid = ?");
 			ps.setString(1, player.getUniqueId().toString());
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) {
-				return new DatabaseInventoryData(rs.getString("invSync_inv_main"), rs.getString("invSync_inv_armor"), rs.getString("invSync_inv_enderchest"), rs.getFloat("invSync_xp"), rs.getInt("invSync_level"));
+				return new DatabaseInventoryData(rs.getString("invSync_inv_main"), rs.getString("invSync_inv_armor"), rs.getString("invSync_inv_enderchest"), rs.getString("invSync_inv_backpack"), rs.getFloat("invSync_xp"), rs.getInt("invSync_level"));
 			}else {
 				return null;
 			}
@@ -718,6 +718,35 @@ public class LotusController {
 		player.setExp(data.getXP());
 		player.setLevel(data.getLevel());
 		player.updateInventory();
+	}
+	
+	public void saveBPData(Player player, ItemStack[] backpack) {
+        String backpackS = encodeItems(backpack);
+        try {
+            PreparedStatement ps = MySQL.getConnection().prepareStatement("UPDATE mc_users SET invSync_inv_backpack = ? WHERE mcuuid = ?");
+            ps.setString(1, backpackS);
+            ps.setString(2, player.getUniqueId().toString());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public ItemStack[] getBPData(Player player) {
+		try {
+			PreparedStatement ps = MySQL.getConnection()
+					.prepareStatement("SELECT invSync_inv_backpack FROM mc_users WHERE mcuuid = ?");
+			ps.setString(1, player.getUniqueId().toString());
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return decodeItems(rs.getString("invSync_inv_backpack"));
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public void onDataSaveFunction(Player player, ItemStack[] inventory, ItemStack[] armor, ItemStack[] enderChest) {
