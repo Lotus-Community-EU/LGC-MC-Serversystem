@@ -5,6 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.MenuType;
 
 import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
@@ -20,7 +22,8 @@ public class WorkbenchCMD implements CommandExecutor{
 			LotusController lc = new LotusController();
 			if(player.hasPermission("lgc.command.workbench")) {
 				lc.sendMessageReady(player, "command.workbench.open");
-				player.openWorkbench(null, true);
+				InventoryView view = MenuType.CRAFTING.create(player, "§aMobile Workbench");
+				player.openInventory(view);
 			}else {
 				lc.noPerm(player, "lgc.command.workbench");
 			}
