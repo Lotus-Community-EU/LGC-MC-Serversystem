@@ -36,3 +36,5 @@ commands:
     gc:
     backpack:
         aliases: bp
+	onlinemap:
+		aliases: map

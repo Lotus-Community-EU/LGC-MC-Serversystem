@@ -14,6 +14,7 @@ import eu.lotusgc.mc.command.GC_CMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
+import eu.lotusgc.mc.command.OnlinemapCommand;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.ScoreboardChangeCMD;
@@ -101,6 +102,8 @@ public class LotusManager {
 			Main.main.getCommand("gc").setExecutor(new GC_CMD());
 			Main.main.getCommand("backpack").setExecutor(new OpenCommand());
 			Main.main.getCommand("bp").setExecutor(new OpenCommand());
+			Main.main.getCommand("onlinemap").setExecutor(new OnlinemapCommand());
+			Main.main.getCommand("map").setExecutor(new OnlinemapCommand());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
