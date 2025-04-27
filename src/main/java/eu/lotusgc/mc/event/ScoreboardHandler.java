@@ -45,6 +45,7 @@ import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.Playerdata;
 import eu.lotusgc.mc.misc.Prefix;
 import eu.lotusgc.mc.misc.ServerRestarter;
+import eu.lotusgc.mc.misc.util.LotusPlayer;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 
@@ -270,9 +271,10 @@ public class ScoreboardHandler implements Listener{
 		
 		for(Player all : Bukkit.getOnlinePlayers()) {
 			//Lotus Internal
-			String nick = lc.getPlayerData(all, Playerdata.Nick);
-			String clan = lc.getPlayerData(all, Playerdata.Clan);
-			String id = lc.getPlayerData(all, Playerdata.LotusChangeID);
+			LotusPlayer lp = new LotusPlayer(all);
+			String nick = lp.getNick();
+			String clan = lp.getClan();
+			String id = String.valueOf(lp.getLGCId());
 			if(nick.equalsIgnoreCase("none")) {
 				all.setCustomName(all.getName());
 			}else {
@@ -435,7 +437,7 @@ public class ScoreboardHandler implements Listener{
 		return group;
 	}
 	
-	public static void initRoles() {
+	public void initRoles() {
 		try {
 			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM core_ranks");
 			ResultSet rs = ps.executeQuery();
