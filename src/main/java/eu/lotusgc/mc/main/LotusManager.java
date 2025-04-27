@@ -19,6 +19,7 @@ import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
 import eu.lotusgc.mc.command.ScoreboardChangeCMD;
 import eu.lotusgc.mc.command.SpawnSystem;
+import eu.lotusgc.mc.command.SpeedCommand;
 import eu.lotusgc.mc.command.TP_Command;
 import eu.lotusgc.mc.command.TimeCMD;
 import eu.lotusgc.mc.command.WeatherCMD;
@@ -29,6 +30,7 @@ import eu.lotusgc.mc.event.ColorSigns;
 import eu.lotusgc.mc.event.InventoryHandler;
 import eu.lotusgc.mc.event.JoinLeaveEvent;
 import eu.lotusgc.mc.event.KillStats;
+import eu.lotusgc.mc.event.NotifyBiomeChange;
 import eu.lotusgc.mc.event.ScoreboardHandler;
 import eu.lotusgc.mc.event.ShopHandler;
 import eu.lotusgc.mc.misc.MySQL;
@@ -104,6 +106,7 @@ public class LotusManager {
 			Main.main.getCommand("bp").setExecutor(new OpenCommand());
 			Main.main.getCommand("onlinemap").setExecutor(new OnlinemapCommand());
 			Main.main.getCommand("map").setExecutor(new OnlinemapCommand());
+			Main.main.getCommand("speed").setExecutor(new SpeedCommand());
 			
 			PluginManager pm = Bukkit.getPluginManager();
 			pm.registerEvents(new KillStats(), Main.main);
@@ -116,6 +119,7 @@ public class LotusManager {
 			pm.registerEvents(new ColorSigns(), Main.main);
 			pm.registerEvents(new ShopHandler(), Main.main);
 			pm.registerEvents(new BackpackHandler(), Main.main);
+			pm.registerEvents(new NotifyBiomeChange(), Main.main);
 			
 			Bukkit.getConsoleSender().sendMessage("§aMain-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
 		}
@@ -133,7 +137,7 @@ public class LotusManager {
 			JoinLeaveEvent.initRoles();
 			
 			SyncServerdata.startScheduler();
-			ScoreboardHandler.initRoles();
+			new ScoreboardHandler().initRoles();
 			new ScoreboardHandler().startScheduler(0, 40, 20);
 			InventoryHandler.loadServer();
 			
