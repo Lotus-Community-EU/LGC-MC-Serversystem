@@ -42,13 +42,13 @@ public class LotusPlayer {
 				this.countryCode = rs.getString("countryCode");
 				this.lgcid = rs.getInt("lgcid");
 				this.playTime = rs.getInt("playTime");
-				this.bankMoney = rs.getInt("bankMoney");
-				this.pocketMoney = rs.getInt("pocketMoney");
-				this.moneyInterestLevel = rs.getInt("moneyInterestLevel");
-				this.killedPlayers = rs.getInt("killedPlayers");
-				this.killedEntities = rs.getInt("killedEntities");
-				this.gotKilledByPlayers = rs.getInt("gotKilledByPlayers");
-				this.gotKilledByEntities = rs.getInt("gotKilledByEntities");
+				this.bankMoney = rs.getInt("money_bank");
+				this.pocketMoney = rs.getInt("money_pocket");
+				this.moneyInterestLevel = rs.getInt("money_interestLevel");
+				this.killedPlayers = rs.getInt("playerKillsPlayer");
+				this.killedEntities = rs.getInt("playerKillsEntity");
+				this.gotKilledByPlayers = rs.getInt("playerKilledByPlayer");
+				this.gotKilledByEntities = rs.getInt("playerKilledByEntity");
 				this.discordId = rs.getLong("discordId");
 				this.firstJoin = rs.getLong("firstJoin");
 				this.lastJoin = rs.getLong("lastJoin");
@@ -57,7 +57,7 @@ public class LotusPlayer {
 				this.allowTPA = rs.getBoolean("allowTPA");
 				this.allowMSG = rs.getBoolean("allowMSG");
 				this.existLGAccount = true;
-				int sbState = rs.getInt("sbState");
+				int sbState = rs.getInt("scoreboardState");
 				switch(sbState) {
 				case 0:
 					this.sbState = ScoreboardState.OFF;
