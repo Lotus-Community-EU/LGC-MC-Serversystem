@@ -28,6 +28,8 @@ public class ScoreboardChangeCMD implements CommandExecutor{
 	 * 7 = World Info and Coordinates
 	 * 8 = View Players around you (normal = 500 blocks, premium = 1000, Admin and higher (2500 blocks))
 	 * 9 = View Entities (except Players) around you (normal 100 blocks, premium 250 blocks, Staffs general up to 500 blocks (only the nearest 10 will be listed anyway!)
+	 * 10 = VoIP-Service Info
+	 * 11 = Spotify Info
 	 * 
 	 * command.sb.off -> You've turned the sideboard off.
 	 * command.sb.status -> Switched sideboard to %status%.
@@ -53,10 +55,11 @@ public class ScoreboardChangeCMD implements CommandExecutor{
 				case "players": updateSB(player, 8); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Players")); break;
 				case "entities": updateSB(player, 9); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Entities")); break;
 				case "voip": updateSB(player, 10); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "VoIP-Service Info")); break;
+				case "spotify": updateSB(player, 11); player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "command.sb.status").replace("%status%", "Spotify Info")); break;
 				default: player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities|voip>"); break;
 				}
 			}else {
-				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities|voip>");
+				player.sendMessage(lc.getPrefix(Prefix.MAIN) + lc.sendMessageToFormat(player, "global.args") + "§7/sb <off|default|job|reports|serverstatus|server|world|players|entities|voip|spotify>");
 			}
 		}
 		return true;
