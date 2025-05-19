@@ -11,23 +11,26 @@ import eu.lotusgc.mc.misc.MySQL;
 import eu.lotusgc.mc.misc.ScoreboardState;
 
 public class LotusPlayer {
-	
-	private String uuid, clan, name, nick, currentLastServer, language, playerGroup, customDateFormat, customTimeFormat, timeZone, countryCode;
-	private int id, lgcid, playTime, bankMoney, pocketMoney, moneyInterestLevel, killedPlayers, killedEntities, gotKilledByPlayers, gotKilledByEntities;
+
+	private String uuid, clan, name, nick, currentLastServer, language, playerGroup, customDateFormat, customTimeFormat,
+			timeZone, countryCode, spotifyTrack, spotifyArtist;
+	private int id, lgcid, playTime, bankMoney, pocketMoney, moneyInterestLevel, killedPlayers, killedEntities,
+			gotKilledByPlayers, gotKilledByEntities;
 	private long discordId, firstJoin, lastJoin;
 	@SuppressWarnings("unused")
-	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount;
+	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount, spotifyPlayback, connectedSpotify;
 	private ScoreboardState sbState;
-	
+
 	/**
 	 * Constructor class
+	 * 
 	 * @param player - needed to get the correct data for according player.
 	 */
 	public LotusPlayer(Player player) {
-		try(PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM mc_users WHERE mcuuid = ?")){
+		try (PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM mc_users WHERE mcuuid = ?")) {
 			ps.setString(1, player.getUniqueId().toString());
 			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				this.id = rs.getInt("id");
 				this.uuid = rs.getString("mcuuid");
 				this.clan = rs.getString("clan");
@@ -40,6 +43,18 @@ public class LotusPlayer {
 				this.customTimeFormat = rs.getString("customTimeFormat");
 				this.timeZone = rs.getString("timeZone");
 				this.countryCode = rs.getString("countryCode");
+				rs.getString("spotifyRefreshToken");
+				if(rs.wasNull()){
+					this.spotifyTrack = null;
+					this.spotifyArtist = null;
+					this.connectedSpotify = false;
+				} else {
+					this.spotifyTrack = rs.getString("spotifyTrack");
+					this.spotifyArtist = rs.getString("spotifyArtist");
+					this.spotifyPlayback = rs.getBoolean("spotifyPlaying");
+					this.connectedSpotify = true;
+				}
+				
 				this.lgcid = rs.getInt("lgcid");
 				this.playTime = rs.getInt("playTime");
 				this.bankMoney = rs.getInt("money_bank");
@@ -58,312 +73,388 @@ public class LotusPlayer {
 				this.allowMSG = rs.getBoolean("allowMSG");
 				this.existLGAccount = true;
 				int sbState = rs.getInt("scoreboardState");
-				switch(sbState) {
-				case 0:
-					this.sbState = ScoreboardState.OFF;
-					break;
-				case 1:
-					this.sbState = ScoreboardState.DEFAULT;
-					break;
-				case 2:
-					this.sbState = ScoreboardState.JOB;
-					break;
-				case 3:
-					this.sbState = ScoreboardState.REPORTS;
-					break;
-				case 4:
-					this.sbState = ScoreboardState.SERVERSTATUS;
-					break;
-				case 5:
-					this.sbState = ScoreboardState.RADIO;
-					break;
-				case 6:
-					this.sbState = ScoreboardState.SERVER;
-					break;
-				case 7:
-					this.sbState = ScoreboardState.WORLD;
-					break;
-				case 8:
-					this.sbState = ScoreboardState.PLAYERS;
-					break;
-				case 9:
-					this.sbState = ScoreboardState.ENTITIES;
-					break;
-				case 10:
-					this.sbState = ScoreboardState.VOIP;
-					break;
+				switch (sbState) {
+					case 0:
+						this.sbState = ScoreboardState.OFF;
+						break;
+					case 1:
+						this.sbState = ScoreboardState.DEFAULT;
+						break;
+					case 2:
+						this.sbState = ScoreboardState.JOB;
+						break;
+					case 3:
+						this.sbState = ScoreboardState.REPORTS;
+						break;
+					case 4:
+						this.sbState = ScoreboardState.SERVERSTATUS;
+						break;
+					case 5:
+						this.sbState = ScoreboardState.RADIO;
+						break;
+					case 6:
+						this.sbState = ScoreboardState.SERVER;
+						break;
+					case 7:
+						this.sbState = ScoreboardState.WORLD;
+						break;
+					case 8:
+						this.sbState = ScoreboardState.PLAYERS;
+						break;
+					case 9:
+						this.sbState = ScoreboardState.ENTITIES;
+						break;
+					case 10:
+						this.sbState = ScoreboardState.VOIP;
+						break;
+					case 11:
+						this.sbState = ScoreboardState.SPOTIFY;
+						break;
 				}
-			}else {
+			} else {
 				this.existLGAccount = false;
 			}
 			rs.close();
 			ps.close();
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	  * Gets the saved UUID for the player.
-	  * @return the UUID
-	  */
-	 public String getUuid() {
-	  return uuid;
-	 }
+	 * Gets the saved UUID for the player.
+	 * 
+	 * @return the UUID
+	 */
+	public String getUuid() {
+		return uuid;
+	}
 
-	 /**
-	  * Gets the clan the player is in.
-	  * @return the Clan Name (or none if not set)
-	  */
-	 public String getClan() {
-	  return clan;
-	 }
+	/**
+	 * Gets the clan the player is in.
+	 * 
+	 * @return the Clan Name (or none if not set)
+	 */
+	public String getClan() {
+		return clan;
+	}
 
-	 /**
-	  * Gets the player name.
-	  * @return the player name
-	  */
-	 public String getName() {
-	  return name;
-	 }
+	/**
+	 * Gets the player name.
+	 * 
+	 * @return the player name
+	 */
+	public String getName() {
+		return name;
+	}
 
-	 /**
-	  * Gets the player nick.
-	  * @return the nickname (or none if not set)
-	  */
-	 public String getNick() {
-	  return nick;
-	 }
+	/**
+	 * Gets the player nick.
+	 * 
+	 * @return the nickname (or none if not set)
+	 */
+	public String getNick() {
+		return nick;
+	}
 
-	 /**
-	  * Gets the current / last Server the player is / was in.
-	  * @return the server name
-	  */
-	 public String getCurrentLastServer() {
-	  return currentLastServer;
-	 }
+	/**
+	 * Gets the current / last Server the player is / was in.
+	 * 
+	 * @return the server name
+	 */
+	public String getCurrentLastServer() {
+		return currentLastServer;
+	}
 
-	 /**
-	  * Gets the set language from the player.
-	  * @return the Language
-	  */
-	 public String getLanguage() {
-	  return language;
-	 }
+	/**
+	 * Gets the set language from the player.
+	 * 
+	 * @return the Language
+	 */
+	public String getLanguage() {
+		return language;
+	}
 
-	 /**
-	  * Gets the primary role of the player.
-	  * @return the name of the role
-	  */
-	 public String getPlayerGroup() {
-	  return playerGroup;
-	 }
+	/**
+	 * Gets the primary role of the player.
+	 * 
+	 * @return the name of the role
+	 */
+	public String getPlayerGroup() {
+		return playerGroup;
+	}
 
-	 /**
-	  * Gets the custom date Format.
-	  * @return the date format (Default: dd.MM.yyyy)
-	  */
-	 public String getCustomDateFormat() {
-	  return customDateFormat;
-	 }
+	/**
+	 * Gets the custom date Format.
+	 * 
+	 * @return the date format (Default: dd.MM.yyyy)
+	 */
+	public String getCustomDateFormat() {
+		return customDateFormat;
+	}
 
-	 /**
-	  * Gets the custom time Format.
-	  * @return the time format (Default: HH:mm:ss)
-	  */
-	 public String getCustomTimeFormat() {
-	  return customTimeFormat;
-	 }
+	/**
+	 * Gets the custom time Format.
+	 * 
+	 * @return the time format (Default: HH:mm:ss)
+	 */
+	public String getCustomTimeFormat() {
+		return customTimeFormat;
+	}
 
-	 /**
-	  * Gets the timezone of the player.
-	  * @return the timezone
-	  */
-	 public String getTimeZone() {
-	  return timeZone;
-	 }
+	/**
+	 * Gets the timezone of the player.
+	 * 
+	 * @return the timezone
+	 */
+	public String getTimeZone() {
+		return timeZone;
+	}
 
-	 /**
-	  * Gets the 2 Digit Country Shortcode (e.g. AT, DE, CZ).
-	  * @return the country code
-	  */
-	 public String getCountryCode() {
-	  return countryCode;
-	 }
+	/**
+	 * Gets the 2 Digit Country Shortcode (e.g. AT, DE, CZ).
+	 * 
+	 * @return the country code
+	 */
+	public String getCountryCode() {
+		return countryCode;
+	}
 
-	 /**
-	  * Gets the internal ID of the player.
-	  * @return the ID
-	  */
-	 public int getId() {
-	  return id;
-	 }
+	/*
+	 * Gets the Spotify Track of the player. (If they have Spotify connected)
+	 * 
+	 * @return the Spotify Track
+	 */
+	public String getSpotifyTrack() {
+		return spotifyTrack;
+	}
 
-	 /**
-	  * Gets the random ID of a user (can be chosen).
-	  * @return the ID
-	  */
-	 public int getLGCId() {
-	  return lgcid;
-	 }
+	/*
+	 * Gets the Spotify Artist of the player. (If they have Spotify connected)
+	 * 
+	 * @return the Spotify Artist
+	 */
 
-	 /**
-	  * Gets the playtime in seconds.
-	  * @return the time played in seconds
-	  */
-	 public int getPlayTime() {
-	  return playTime;
-	 }
+	public String getSpotifyArtist() {
+		return spotifyArtist;
+	}
 
-	 /**
-	  * Gets the available Money from the Bank Account.
-	  * @return the money from bank account
-	  */
-	 public int getBankMoney() {
-	  return bankMoney;
-	 }
+	/**
+	 * Gets the internal ID of the player.
+	 * 
+	 * @return the ID
+	 */
+	public int getId() {
+		return id;
+	}
 
-	 /**
-	  * Gets the available Money from the Pocket "Account".
-	  * @return the money from pocket
-	  */
-	 public int getPocketMoney() {
-	  return pocketMoney;
-	 }
+	/**
+	 * Gets the random ID of a user (can be chosen).
+	 * 
+	 * @return the ID
+	 */
+	public int getLGCId() {
+		return lgcid;
+	}
 
-	 /**
-	  * Gets the available Money total from the player.
-	  * @return the money (Bank & Pocket)
-	  */
-	 public int getCombinedMoney() {
-	  return (bankMoney + pocketMoney);
-	 }
+	/**
+	 * Gets the playtime in seconds.
+	 * 
+	 * @return the time played in seconds
+	 */
+	public int getPlayTime() {
+		return playTime;
+	}
 
-	 /**
-	  * Gets the Interest Level of the player.
-	  * @return the interest level
-	  */
-	 public int getMoneyInterestLevel() {
-	  return moneyInterestLevel;
-	 }
+	/**
+	 * Gets the available Money from the Bank Account.
+	 * 
+	 * @return the money from bank account
+	 */
+	public int getBankMoney() {
+		return bankMoney;
+	}
 
-	 /**
-	  * Returns how many players the player has killed.
-	  * @return the amount of killed players
-	  */
-	 public int getKilledPlayers() {
-	  return killedPlayers;
-	 }
+	/**
+	 * Gets the available Money from the Pocket "Account".
+	 * 
+	 * @return the money from pocket
+	 */
+	public int getPocketMoney() {
+		return pocketMoney;
+	}
 
-	 /**
-	  * Returns how many entities the player has killed.
-	  * @return the amount of killed entities
-	  */
-	 public int getKilledEntities() {
-	  return killedEntities;
-	 }
+	/**
+	 * Gets the available Money total from the player.
+	 * 
+	 * @return the money (Bank & Pocket)
+	 */
+	public int getCombinedMoney() {
+		return (bankMoney + pocketMoney);
+	}
 
-	 /**
-	  * Returns how often the player got killed by players.
-	  * @return the amount of being killed by players
-	  */
-	 public int getGotKilledByPlayers() {
-	  return gotKilledByPlayers;
-	 }
+	/**
+	 * Gets the Interest Level of the player.
+	 * 
+	 * @return the interest level
+	 */
+	public int getMoneyInterestLevel() {
+		return moneyInterestLevel;
+	}
 
-	 /**
-	  * Returns how many entities the player has killed.
-	  * @return the amount of being killed by entities
-	  */
-	 public int getGotKilledByEntities() {
-	  return gotKilledByEntities;
-	 }
+	/**
+	 * Returns how many players the player has killed.
+	 * 
+	 * @return the amount of killed players
+	 */
+	public int getKilledPlayers() {
+		return killedPlayers;
+	}
 
-	 /**
-	  * Returns the Discord User Snowflake.
-	  * @return 0 or the discord user snowflake
-	  */
-	 public long getDiscordId() {
-	  return discordId;
-	 }
+	/**
+	 * Returns how many entities the player has killed.
+	 * 
+	 * @return the amount of killed entities
+	 */
+	public int getKilledEntities() {
+		return killedEntities;
+	}
 
-	 /**
-	  * Returns the timestamp when the player joined first.
-	  * @return the timestamp of the first join
-	  */
-	 public long getFirstJoin() {
-	  return firstJoin;
-	 }
+	/**
+	 * Returns how often the player got killed by players.
+	 * 
+	 * @return the amount of being killed by players
+	 */
+	public int getGotKilledByPlayers() {
+		return gotKilledByPlayers;
+	}
 
-	 /**
-	  * Returns the timestamp when the player joined last time.
-	  * @return the timestamp of the last join
-	  */
-	 public long getLastJoin() {
-	  return lastJoin;
-	 }
+	/**
+	 * Returns how many entities the player has killed.
+	 * 
+	 * @return the amount of being killed by entities
+	 */
+	public int getGotKilledByEntities() {
+		return gotKilledByEntities;
+	}
 
-	 /**
-	  * Returns whether the player is online or not.
-	  * @return whether the player is online or not
-	  */
-	 public boolean isOnline() {
-	  return isOnline;
-	 }
+	/**
+	 * Returns the Discord User Snowflake.
+	 * 
+	 * @return 0 or the discord user snowflake
+	 */
+	public long getDiscordId() {
+		return discordId;
+	}
 
-	 /**
-	  * Returns whether the player is staff or not.
-	  * @return whether the player is staff or not
-	  */
-	 public boolean isStaff() {
-	  return isStaff;
-	 }
+	/**
+	 * Returns the timestamp when the player joined first.
+	 * 
+	 * @return the timestamp of the first join
+	 */
+	public long getFirstJoin() {
+		return firstJoin;
+	}
 
-	 /**
-	  * This method is currently always returning false as the internal Punishment System is not yet implemented.
-	  * @return whether the user is banned or not
-	  */
-	 public boolean isBanned() {
-	  return false;
-	 }
+	/**
+	 * Returns the timestamp when the player joined last time.
+	 * 
+	 * @return the timestamp of the last join
+	 */
+	public long getLastJoin() {
+		return lastJoin;
+	}
 
-	 /**
-	  * This method is currently always returning false as the internal Punishment System is not yet implemented.
-	  * @return whether the user is muted or not
-	  */
-	 public boolean isMuted() {
-	  return false;
-	 }
+	/**
+	 * Returns whether the player is online or not.
+	 * 
+	 * @return whether the player is online or not
+	 */
+	public boolean isOnline() {
+		return isOnline;
+	}
 
-	 /**
-	  * Returns whether the player allows TPA Requests or not.
-	  * @return if the player allows TPA requests or not
-	  */
-	 public boolean isAllowTPA() {
-	  return allowTPA;
-	 }
+	/**
+	 * Returns whether the player is staff or not.
+	 * 
+	 * @return whether the player is staff or not
+	 */
+	public boolean isStaff() {
+		return isStaff;
+	}
 
-	 /**
-	  * Returns whether the player allows private messages or not.
-	  * @return if the player allows private messages or not
-	  */
-	 public boolean isAllowMSG() {
-	  return allowMSG;
-	 }
+	/**
+	 * This method is currently always returning false as the internal Punishment
+	 * System is not yet implemented.
+	 * 
+	 * @return whether the user is banned or not
+	 */
+	public boolean isBanned() {
+		return false;
+	}
 
-	 /**
-	  * Returns whether the user has played on the server already or not.
-	  * @return true if the player has already joined Lotus, false if not
-	  */
-	 public boolean hasExistingLotusGamingAccount() {
-	  return existLGAccount;
-	 }
+	/**
+	 * This method is currently always returning false as the internal Punishment
+	 * System is not yet implemented.
+	 * 
+	 * @return whether the user is muted or not
+	 */
+	public boolean isMuted() {
+		return false;
+	}
 
-	 /**
-	  * Returns the ScoreboardState of the player.
-	  * @return the ScoreboardState of the player
-	  */
-	 public ScoreboardState getScoreboardState() {
-	  return sbState;
-	 }
+	/**
+	 * Returns whether the player allows TPA Requests or not.
+	 * 
+	 * @return if the player allows TPA requests or not
+	 */
+	public boolean isAllowTPA() {
+		return allowTPA;
+	}
+
+	/**
+	 * Returns whether the player allows private messages or not.
+	 * 
+	 * @return if the player allows private messages or not
+	 */
+	public boolean isAllowMSG() {
+		return allowMSG;
+	}
+
+	/**
+	 * Returns whether the user has played on the server already or not.
+	 * 
+	 * @return true if the player has already joined Lotus, false if not
+	 */
+	public boolean hasExistingLotusGamingAccount() {
+		return existLGAccount;
+	}
+
+	/**
+	 * Returns whether the player is listening to Spotify or not.
+	 * 
+	 * @return true if the player is listening to Spotify, false if not
+	 */
+
+	public boolean isListeningToSpotify() {
+		return spotifyPlayback;
+	}
+
+	/**
+	 * Returns whether the player has connected their Spotify account or not.
+	 * @return true if the player has connected their Spotify account, false if not
+	 */
+
+	public boolean hasConnectedSpotify() {
+		return connectedSpotify;
+	}
+
+	/**
+	 * Returns the ScoreboardState of the player.
+	 * 
+	 * @return the ScoreboardState of the player
+	 */
+	public ScoreboardState getScoreboardState() {
+		return sbState;
+	}
 }

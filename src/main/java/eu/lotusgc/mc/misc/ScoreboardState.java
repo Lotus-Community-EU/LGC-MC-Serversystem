@@ -12,6 +12,7 @@ public enum ScoreboardState {
 	WORLD,
 	PLAYERS,
 	ENTITIES,
-	VOIP;
-}
+	VOIP,
+	SPOTIFY;
 
+}
