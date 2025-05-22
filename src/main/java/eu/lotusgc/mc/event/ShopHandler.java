@@ -209,7 +209,7 @@ public class ShopHandler implements Listener {
 	}
 	
 	String[] getPrices(Location location, String server) {
-		String args = null;
+		String args = "";
 		try {
 			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT buyPrice,sellPrice FROM mc_adminshop WHERE server = ? AND world = ? AND x = ? AND y = ? AND z = ?");
 			ps.setString(1, server);
