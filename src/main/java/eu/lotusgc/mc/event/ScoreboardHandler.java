@@ -54,8 +54,7 @@ public class ScoreboardHandler implements Listener {
 	private static HashMap<String, String> tabHM = new HashMap<>(); // HashMap for Tab
 	private static HashMap<String, String> chatHM = new HashMap<>(); // HashMap for Chat
 	private static HashMap<String, String> roleHM = new HashMap<>(); // HashMap for Team Priority (Sorted)
-	private static HashMap<String, String> sbHM = new HashMap<>(); // HashMap for Sideboard (Like Chat, just with no
-																	// additional chars)
+	private static HashMap<String, String> sbHM = new HashMap<>(); // HashMap for Sideboard (Like Chat, just with no additional chars)
 
 	/*
 	 * Scoreboard States:
@@ -269,13 +268,14 @@ public class ScoreboardHandler implements Listener {
 			// Spotify
 			if (lp.hasConnectedSpotify()) {
 				String track = lp.getSpotifyTrack();
-				if (track.length() > 20) {
-					track = track.substring(0, 20);
+				if(track.length() > 16){
+					track = track.substring(0, 16);
 				}
 				String artist = lp.getSpotifyArtist();
-				if (artist.length() > 20) {
-					artist = artist.substring(0, 20);
+				if(artist.length() > 16){
+					artist = artist.substring(0, 16);
 				}
+
 				if(lp.isListeningToSpotify()){
 					o.getScore("§aSpotify").setScore(6);
 				}else {
