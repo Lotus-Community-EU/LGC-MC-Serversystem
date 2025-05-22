@@ -1,6 +1,13 @@
 package eu.lotusgc.mc.main;
 
 import java.io.File;
+import java.io.IOError;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -153,6 +160,8 @@ public class LotusManager {
 
 		JoinLeaveEvent.initRoles();
 
+		deleteOldLogFiles();
+
 		SyncServerdata.startScheduler();
 		new ScoreboardHandler().initRoles();
 		new ScoreboardHandler().startScheduler(0, 40, 20);
@@ -167,5 +176,30 @@ public class LotusManager {
 
 		Bukkit.getConsoleSender()
 				.sendMessage("§aPost-Initialisation took §6" + (System.currentTimeMillis() - current) + "§ams");
+	}
+
+	private void deleteOldLogFiles() {
+		File[] files = new File("/home/container/logs").listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.isFile() && file.getName().endsWith(".log.gz")) {
+					try {
+						BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+						FileTime creationTime = attr.creationTime();
+						long creationTimeMillis = creationTime.toMillis();
+						long maxAgeMillis = 1209600000L; // 14 days in milliseconds
+						if (System.currentTimeMillis() - creationTimeMillis > maxAgeMillis) {
+							// Delete the file if it's older than 30 days
+							// file.delete();
+							Bukkit.getConsoleSender().sendMessage("§aDeleting old log file: §7" + file.getName());
+							Files.delete(file.toPath());
+						}
+					}catch (IOException e){
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		Bukkit.getConsoleSender().sendMessage("§aOld log files deleted.");
 	}
 }
