@@ -275,18 +275,32 @@ public class ScoreboardHandler implements Listener {
 				if(artist.length() > 16){
 					artist = artist.substring(0, 16);
 				}
-
-				if(lp.isListeningToSpotify()){
-					o.getScore("§aSpotify").setScore(6);
-				}else {
-					o.getScore("§cSpotify").setScore(6);
+				String progressBar = showProgressBar(lp.getSpotifyProgressMs(), lp.getSpotifyDurationMs(), 10);
+				String progressTime = formatProgressTime(lp.getSpotifyProgressMs(), lp.getSpotifyDurationMs());
+				String progressTimeFull = formatDuration(lp.getSpotifyDurationMs());
+				int playbackCode = lp.getSpotifyPlaybackCode(); // 0 = idling / no active playback, 1 = paused, 2 = playing
+				if(playbackCode == 0){
+					o.getScore("§aSpotify").setScore(3);
+					o.getScore("§7§a§b").setScore(2);
+					o.getScore("§cNo active").setScore(1);
+					o.getScore("§cplayback!").setScore(0);
+				}else if(playbackCode == 2) {
+					o.getScore("§aSpotify").setScore(9);
+					o.getScore("§7§a§b").setScore(8);
+					o.getScore("§aTrack").setScore(7);
+					o.getScore("§7» §6" + track).setScore(6);
+					o.getScore("§d§5§9").setScore(5);
+					o.getScore("§aArtist").setScore(4);
+					o.getScore("§7» §6" + artist).setScore(3);
+					o.getScore("§f§8§3").setScore(2);
+					o.getScore("§a" + progressBar).setScore(1);
+					o.getScore("§a" + progressTime + " §7/ §c" + progressTimeFull).setScore(0);
+				}else if(playbackCode == 1) {
+					o.getScore("§aSpotify").setScore(2);
+					o.getScore("§7§a§b").setScore(1);
+					o.getScore("§cPaused").setScore(0);
 				}
-				o.getScore("§7§a§b").setScore(5);
-				o.getScore("§aTrack").setScore(4);
-				o.getScore("§7» §6" + track).setScore(3);
-				o.getScore("§d§5§9").setScore(2);
-				o.getScore("§aArtist").setScore(1);
-				o.getScore("§7» §6" + artist).setScore(0);
+				
 			} else {
 				o.getScore("§aSpotify").setScore(3);
 				o.getScore("§7§a§b").setScore(2);
@@ -630,6 +644,54 @@ public class ScoreboardHandler implements Listener {
 			return positive;
 		} else {
 			return negative;
+		}
+	}
+
+	private String showProgressBar(long progressMs, long durationMs, int steps) {
+		long campedProgress = Math.min(progressMs, durationMs);
+		double progressRatio = (double) campedProgress / (double) durationMs;
+		int completedSteps = (int) (progressRatio * steps);
+
+		StringBuilder bar = new StringBuilder("[");
+		for (int i = 0; i < steps; i++) {
+			if (i < completedSteps) {
+				bar.append("█");
+			} else {
+				bar.append("░");
+			}
+		}
+		bar.append("]");
+		return bar.toString();
+
+	}
+
+	private String formatProgressTime(long progressMs, long durationMs) {
+		long clampedProgress = Math.min(progressMs, durationMs);
+		boolean showHours = durationMs >= 3600000; // 1 hour in milliseconds
+
+		long totalSeconds = clampedProgress / 1000;
+		long hours = totalSeconds / 3600;
+		long minutes = (totalSeconds % 3600) / 60;
+		long seconds = totalSeconds % 60;
+
+		if(showHours) {
+			return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+		} else {
+			return String.format("%02d:%02d", minutes, seconds);
+		}
+	}
+
+	private String formatDuration(long durationMs){
+		boolean showHours = durationMs >= 3600000; // 1 hour in milliseconds
+		long totalSeconds = durationMs / 1000;
+		long hours = totalSeconds / 3600;
+		long minutes = (totalSeconds % 3600) / 60;
+		long seconds = totalSeconds % 60;
+
+		if(showHours) {
+			return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+		} else {
+			return String.format("%02d:%02d", minutes, seconds);
 		}
 	}
 

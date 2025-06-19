@@ -15,10 +15,10 @@ public class LotusPlayer {
 	private String uuid, clan, name, nick, currentLastServer, language, playerGroup, customDateFormat, customTimeFormat,
 			timeZone, countryCode, spotifyTrack, spotifyArtist;
 	private int id, lgcid, playTime, bankMoney, pocketMoney, moneyInterestLevel, killedPlayers, killedEntities,
-			gotKilledByPlayers, gotKilledByEntities;
-	private long discordId, firstJoin, lastJoin;
+			gotKilledByPlayers, gotKilledByEntities, spotifyPlaybackCode;
+	private long discordId, firstJoin, lastJoin, spotifyProgressMs, spotifyDurationMs;
 	@SuppressWarnings("unused")
-	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount, spotifyPlayback, connectedSpotify;
+	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount, connectedSpotify, spotifyLocalTrack;
 	private ScoreboardState sbState;
 
 	/**
@@ -48,10 +48,17 @@ public class LotusPlayer {
 					this.spotifyTrack = null;
 					this.spotifyArtist = null;
 					this.connectedSpotify = false;
+					this.spotifyPlaybackCode = 0;
+					this.spotifyProgressMs = 0;
+					this.spotifyDurationMs = 0;
+					this.spotifyLocalTrack = false;
 				} else {
 					this.spotifyTrack = rs.getString("spotifyTrack");
 					this.spotifyArtist = rs.getString("spotifyArtist");
-					this.spotifyPlayback = rs.getBoolean("spotifyPlaying");
+					this.spotifyPlaybackCode = rs.getInt("spotifyPlaying"); // 0 = idling / no active playback, 1 = paused, 2 = playing
+					this.spotifyProgressMs = rs.getLong("spotifyProgressMs");
+					this.spotifyDurationMs = rs.getLong("spotifyDurationMs");
+					this.spotifyLocalTrack = rs.getBoolean("spotifyLocal");
 					this.connectedSpotify = true;
 				}
 				
@@ -366,6 +373,33 @@ public class LotusPlayer {
 	}
 
 	/**
+	 * Returns the time in ms how far the current song has been progressed.
+	 * 
+	 * @return the time in ms how far the current song has been progressed
+	 */
+	public long getSpotifyProgressMs() {
+		return spotifyProgressMs;
+	}
+
+	/**
+	 * Returns the time in ms how much time the song has.
+	 * 
+	 * @return the time in ms how much time the song has
+	 */
+	public long getSpotifyDurationMs() {
+		return spotifyDurationMs;
+	}
+
+	/**
+	 * Returns the calculated time in ms how much time is left for the current track.
+	 * 
+	 * @return the time in ms how much time is left for the current track
+	 */
+	public long getSpotifyRemainingMs() {
+		return spotifyDurationMs - spotifyProgressMs;
+	}
+
+	/**
 	 * Returns whether the player is online or not.
 	 * 
 	 * @return whether the player is online or not
@@ -436,8 +470,8 @@ public class LotusPlayer {
 	 * @return true if the player is listening to Spotify, false if not
 	 */
 
-	public boolean isListeningToSpotify() {
-		return spotifyPlayback;
+	public int getSpotifyPlaybackCode() {
+		return spotifyPlaybackCode;
 	}
 
 	/**
@@ -447,6 +481,15 @@ public class LotusPlayer {
 
 	public boolean hasConnectedSpotify() {
 		return connectedSpotify;
+	}
+
+	/**
+	 * Returns whether the current playing track is local on the device or not.
+	 * 
+	 * @return true if the current playing track is local, false if not
+	 */
+	public boolean isSpotifyLocalTrack() {
+		return spotifyLocalTrack;
 	}
 
 	/**
