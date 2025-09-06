@@ -66,52 +66,36 @@ public class LotusController {
 	
 	// < - - - END OF INSTANCES - - - >
 	
-	/* Server reads out how many columns there are for the language system. 
-	 * For each entry (except the key value and optionings) a HashMap<String, String> will be created within a HashMap<String, HashMap<String, String>>
-	 * Also it will "download" all keys and their respective value to have less methods for the init.
-	 * IF the map keeps empty due to an unknown reason, then the path will be given out.
-	 */
 	public boolean initLanguageSystem() {
 		try {
-			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM core_translations");
+			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM core_languages");
 			ResultSet rs = ps.executeQuery();
-			ResultSetMetaData rsmd =  rs.getMetaData();
-			int columnCount = rsmd.getColumnCount();
-			int languageStrings = 0;
-			int colToStartFrom = 0;
-			if(rs.next()) {
-				for(int i = 1; i <= columnCount; i++) {
-					String name = rsmd.getColumnName(i);
-					if(name.equals("German")) {
-						colToStartFrom = i;
-						break;
-					}
-				}
-				HashMap<String, String> map;
-				for(int i = colToStartFrom; i <= columnCount; i++) {
-					String name = rsmd.getColumnName(i);
-					availableLanguages.add(name);
-					Main.logger.info("Logged language " + name + " to List");
-					PreparedStatement ps1 = MySQL.getConnection().prepareStatement("SELECT path," + name + ",isGame FROM core_translations");
-					ResultSet rs1 = ps1.executeQuery();
+			while(rs.next()){
+				int langId = rs.getInt("LanguageId");
+				String langName = rs.getString("FullName");
+				String langCode = rs.getString("LanguageCode");
+				availableLanguages.add(langName);
+				Main.logger.info("Found Language: " + langName + " (" + langCode + ") with ID " + langId);
+				PreparedStatement ps1 = MySQL.getConnection().prepareStatement("SELECT k.TranslationKey, t.TranslationValue FROM core_translations t JOIN core_translation_keys k ON k.TranslationKeyId = t.TranslationKeyId WHERE k.isGame = 1 AND LanguageId = ?");
+				ps1.setInt(1, langId);
+				ResultSet rs1 = ps1.executeQuery();
+				HashMap<String, String> map = null;
+				int i = 0;
+				while(rs1.next()) {
 					map = new HashMap<>();
-					int subLangStrings = 0;
-					while(rs1.next()) {
-						if(rs1.getBoolean("isGame")) {
-							subLangStrings++;
-							//Only get Strings, which are for the game (what would we do with website/bot string, right?)
-							map.put(rs1.getString("path"), rs1.getString(name));
-						}
-					}
-					languageStrings = subLangStrings;
-					langMap.put(name, map);
+					map.put(rs1.getString("TranslationKey"), rs1.getString("TranslationValue"));
+					i++;
 				}
-				Main.logger.info("langMap logged " + langMap.size() + " entries with each " + languageStrings + " entries per language.");
+				langMap.put(langCode, map);
+				map.clear();
 			}
+			rs.close();
+			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return langMap.isEmpty();
+
+		return false;
 	}
 	
 	public List<String> getAvailableLanguages() {
@@ -151,7 +135,7 @@ public class LotusController {
 	public String sendMessageToFormat(Player player, String path) {
 		String toReturn = returnString(returnLanguage(player), path);
 		if(toReturn.equalsIgnoreCase("none")) {
-			return returnString("English", path);
+			return returnString("en", path);
 		}else {
 			return toReturn;
 		}
@@ -159,7 +143,7 @@ public class LotusController {
 	
 	//This method is returns the player's selected language.
 	public String returnLanguage(Player player) {
-		String defaultLanguage = "English";
+		String defaultLanguage = "en";
 		if(playerLanguages.containsKey(player.getUniqueId().toString())) {
 			defaultLanguage = playerLanguages.get(player.getUniqueId().toString());
 		}
@@ -174,6 +158,7 @@ public class LotusController {
 	//This method returns the String from the language selected.
 	private String returnString(String language, String path) {
 		if(langMap.containsKey(language)) {
+			Main.logger.info("Language '" + language + "' exists.");
 			HashMap<String, String> localMap = langMap.get(language);
 			if(localMap.containsKey(path)) {
 				return ChatColor.translateAlternateColorCodes('&', localMap.get(path));

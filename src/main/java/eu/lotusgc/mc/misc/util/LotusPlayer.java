@@ -13,12 +13,12 @@ import eu.lotusgc.mc.misc.ScoreboardState;
 public class LotusPlayer {
 
 	private String uuid, clan, name, nick, currentLastServer, language, playerGroup, customDateFormat, customTimeFormat,
-			timeZone, countryCode, spotifyTrack, spotifyArtist;
+			timeZone, countryCode;
 	private int id, lgcid, playTime, bankMoney, pocketMoney, moneyInterestLevel, killedPlayers, killedEntities,
-			gotKilledByPlayers, gotKilledByEntities, spotifyPlaybackCode;
-	private long discordId, firstJoin, lastJoin, spotifyProgressMs, spotifyDurationMs;
+			gotKilledByPlayers, gotKilledByEntities;
+	private long discordId, firstJoin, lastJoin;
 	@SuppressWarnings("unused")
-	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount, connectedSpotify, spotifyLocalTrack;
+	private boolean isOnline, isStaff, isBanned, isMuted, allowTPA, allowMSG, existLGAccount, isLoggedIn;
 	private ScoreboardState sbState;
 
 	/**
@@ -43,25 +43,6 @@ public class LotusPlayer {
 				this.customTimeFormat = rs.getString("customTimeFormat");
 				this.timeZone = rs.getString("timeZone");
 				this.countryCode = rs.getString("countryCode");
-				rs.getString("spotifyRefreshToken");
-				if(rs.wasNull()){
-					this.spotifyTrack = null;
-					this.spotifyArtist = null;
-					this.connectedSpotify = false;
-					this.spotifyPlaybackCode = 0;
-					this.spotifyProgressMs = 0;
-					this.spotifyDurationMs = 0;
-					this.spotifyLocalTrack = false;
-				} else {
-					this.spotifyTrack = rs.getString("spotifyTrack");
-					this.spotifyArtist = rs.getString("spotifyArtist");
-					this.spotifyPlaybackCode = rs.getInt("spotifyPlaying"); // 0 = idling / no active playback, 1 = paused, 2 = playing
-					this.spotifyProgressMs = rs.getLong("spotifyProgressMs");
-					this.spotifyDurationMs = rs.getLong("spotifyDurationMs");
-					this.spotifyLocalTrack = rs.getBoolean("spotifyLocal");
-					this.connectedSpotify = true;
-				}
-				
 				this.lgcid = rs.getInt("lgcid");
 				this.playTime = rs.getInt("playTime");
 				this.bankMoney = rs.getInt("money_bank");
@@ -78,6 +59,7 @@ public class LotusPlayer {
 				this.isStaff = rs.getBoolean("isStaff");
 				this.allowTPA = rs.getBoolean("allowTPA");
 				this.allowMSG = rs.getBoolean("allowMSG");
+				this.isLoggedIn = rs.getBoolean("isLoggedIn");
 				this.existLGAccount = true;
 				int sbState = rs.getInt("scoreboardState");
 				switch (sbState) {
@@ -227,25 +209,6 @@ public class LotusPlayer {
 		return countryCode;
 	}
 
-	/*
-	 * Gets the Spotify Track of the player. (If they have Spotify connected)
-	 * 
-	 * @return the Spotify Track
-	 */
-	public String getSpotifyTrack() {
-		return spotifyTrack;
-	}
-
-	/*
-	 * Gets the Spotify Artist of the player. (If they have Spotify connected)
-	 * 
-	 * @return the Spotify Artist
-	 */
-
-	public String getSpotifyArtist() {
-		return spotifyArtist;
-	}
-
 	/**
 	 * Gets the internal ID of the player.
 	 * 
@@ -373,33 +336,6 @@ public class LotusPlayer {
 	}
 
 	/**
-	 * Returns the time in ms how far the current song has been progressed.
-	 * 
-	 * @return the time in ms how far the current song has been progressed
-	 */
-	public long getSpotifyProgressMs() {
-		return spotifyProgressMs;
-	}
-
-	/**
-	 * Returns the time in ms how much time the song has.
-	 * 
-	 * @return the time in ms how much time the song has
-	 */
-	public long getSpotifyDurationMs() {
-		return spotifyDurationMs;
-	}
-
-	/**
-	 * Returns the calculated time in ms how much time is left for the current track.
-	 * 
-	 * @return the time in ms how much time is left for the current track
-	 */
-	public long getSpotifyRemainingMs() {
-		return spotifyDurationMs - spotifyProgressMs;
-	}
-
-	/**
 	 * Returns whether the player is online or not.
 	 * 
 	 * @return whether the player is online or not
@@ -465,31 +401,12 @@ public class LotusPlayer {
 	}
 
 	/**
-	 * Returns whether the player is listening to Spotify or not.
+	 * Returns whether the player is logged in or not.
 	 * 
-	 * @return true if the player is listening to Spotify, false if not
+	 * @return true if the player is logged in, false if not
 	 */
-
-	public int getSpotifyPlaybackCode() {
-		return spotifyPlaybackCode;
-	}
-
-	/**
-	 * Returns whether the player has connected their Spotify account or not.
-	 * @return true if the player has connected their Spotify account, false if not
-	 */
-
-	public boolean hasConnectedSpotify() {
-		return connectedSpotify;
-	}
-
-	/**
-	 * Returns whether the current playing track is local on the device or not.
-	 * 
-	 * @return true if the current playing track is local, false if not
-	 */
-	public boolean isSpotifyLocalTrack() {
-		return spotifyLocalTrack;
+	public boolean isLoggedIn() {
+		return isLoggedIn;
 	}
 
 	/**
