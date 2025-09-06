@@ -9,14 +9,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +45,7 @@ public class LotusController {
 	//Language System
 	private static HashMap<String, HashMap<String, String>> langMap = new HashMap<>();
 	public static HashMap<String, String> playerLanguages = new HashMap<>();
-	private static List<String> availableLanguages = new ArrayList<>();
+	public static HashMap<String, String> availableLanguages = new HashMap<>();
 	
 	//Prefix System
 	private static HashMap<String, String> prefix = new HashMap<>();
@@ -65,29 +59,32 @@ public class LotusController {
 	private static List<UUID> afkPlayers = new ArrayList<>();
 	
 	// < - - - END OF INSTANCES - - - >
-	
+
 	public boolean initLanguageSystem() {
 		try {
 			PreparedStatement ps = MySQL.getConnection().prepareStatement("SELECT * FROM core_languages");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()){
 				int langId = rs.getInt("LanguageId");
+                String shortName = rs.getString("ShortName");
 				String langName = rs.getString("FullName");
 				String langCode = rs.getString("LanguageCode");
-				availableLanguages.add(langName);
-				Main.logger.info("Found Language: " + langName + " (" + langCode + ") with ID " + langId);
-				PreparedStatement ps1 = MySQL.getConnection().prepareStatement("SELECT k.TranslationKey, t.TranslationValue FROM core_translations t JOIN core_translation_keys k ON k.TranslationKeyId = t.TranslationKeyId WHERE k.isGame = 1 AND LanguageId = ?");
-				ps1.setInt(1, langId);
-				ResultSet rs1 = ps1.executeQuery();
-				HashMap<String, String> map = null;
-				int i = 0;
-				while(rs1.next()) {
-					map = new HashMap<>();
-					map.put(rs1.getString("TranslationKey"), rs1.getString("TranslationValue"));
-					i++;
-				}
-				langMap.put(langCode, map);
-				map.clear();
+				availableLanguages.put(shortName, langName);
+				Main.logger.info("Found Language: " + langName + " (" + langCode + " / " + shortName + ") with ID " + langId);
+                try (PreparedStatement ps1 = MySQL.getConnection().prepareStatement("SELECT k.TranslationKey, t.TranslationValue FROM core_translations t JOIN core_translation_keys k ON k.TranslationKeyId = t.TranslationKeyId WHERE k.isGame = 1 AND LanguageId = ?")) {
+                    ps1.setInt(1, langId);
+                    ResultSet translations = ps1.executeQuery();
+
+                    HashMap<String, String> translationsByLanguage = new HashMap<>();
+                    while (translations.next()) {
+                        String key = translations.getString("TranslationKey");
+                        String value = translations.getString("TranslationValue");
+                        translationsByLanguage.put(key, value);
+                    }
+
+                    langMap.put(shortName, translationsByLanguage);
+                    translations.close();
+                }
 			}
 			rs.close();
 			ps.close();
@@ -96,10 +93,6 @@ public class LotusController {
 		}
 
 		return false;
-	}
-	
-	public List<String> getAvailableLanguages() {
-		return availableLanguages;
 	}
 	
 	public boolean initPlayerLanguages() {
@@ -135,7 +128,7 @@ public class LotusController {
 	public String sendMessageToFormat(Player player, String path) {
 		String toReturn = returnString(returnLanguage(player), path);
 		if(toReturn.equalsIgnoreCase("none")) {
-			return returnString("en", path);
+			return returnString("English", path);
 		}else {
 			return toReturn;
 		}
@@ -143,7 +136,7 @@ public class LotusController {
 	
 	//This method is returns the player's selected language.
 	public String returnLanguage(Player player) {
-		String defaultLanguage = "en";
+		String defaultLanguage = "English";
 		if(playerLanguages.containsKey(player.getUniqueId().toString())) {
 			defaultLanguage = playerLanguages.get(player.getUniqueId().toString());
 		}
@@ -158,7 +151,6 @@ public class LotusController {
 	//This method returns the String from the language selected.
 	private String returnString(String language, String path) {
 		if(langMap.containsKey(language)) {
-			Main.logger.info("Language '" + language + "' exists.");
 			HashMap<String, String> localMap = langMap.get(language);
 			if(localMap.containsKey(path)) {
 				return ChatColor.translateAlternateColorCodes('&', localMap.get(path));
@@ -166,6 +158,7 @@ public class LotusController {
 				return "The path '" + path + "' does not exist!";
 			}
 		}else {
+            Main.logger.warning("Language '" + language + "' does not exist. Falling back to English.");
 			return "The language '" + language + "' does not exist!";
 		}
 	}
