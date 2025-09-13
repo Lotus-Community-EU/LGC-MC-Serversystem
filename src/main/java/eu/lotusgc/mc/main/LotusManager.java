@@ -1,11 +1,9 @@
 package eu.lotusgc.mc.main;
 
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 
@@ -21,6 +19,7 @@ import eu.lotusgc.mc.command.GC_CMD;
 import eu.lotusgc.mc.command.GamemodeCMD;
 import eu.lotusgc.mc.command.Homesystem;
 import eu.lotusgc.mc.command.InvseeCMD;
+import eu.lotusgc.mc.command.LogCmd;
 import eu.lotusgc.mc.command.OnlinemapCommand;
 import eu.lotusgc.mc.command.OpenCommand;
 import eu.lotusgc.mc.command.PrivateMessageCMD;
@@ -130,6 +129,8 @@ public class LotusManager {
 		Main.main.getCommand("onlinemap").setExecutor(new OnlinemapCommand());
 		Main.main.getCommand("map").setExecutor(new OnlinemapCommand());
 		Main.main.getCommand("speed").setExecutor(new SpeedCommand());
+		Main.main.getCommand("logout").setExecutor(new LogCmd());
+		Main.main.getCommand("login").setExecutor(new LogCmd());
 
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new KillStats(), Main.main);
@@ -180,6 +181,7 @@ public class LotusManager {
 
 	private void deleteOldLogFiles() {
 		File[] files = new File("/home/container/logs").listFiles();
+		int size = 0;
 		if (files != null) {
 			for (File file : files) {
 				if (file.isFile() && file.getName().endsWith(".log.gz")) {
@@ -193,6 +195,7 @@ public class LotusManager {
 							// file.delete();
 							Bukkit.getConsoleSender().sendMessage("§aDeleting old log file: §7" + file.getName());
 							Files.delete(file.toPath());
+							size++;
 						}
 					}catch (IOException e){
 						e.printStackTrace();
@@ -200,6 +203,6 @@ public class LotusManager {
 				}
 			}
 		}
-		Bukkit.getConsoleSender().sendMessage("§aOld log files deleted.");
+		Bukkit.getConsoleSender().sendMessage("§aDeleted " + size + " old log files.");
 	}
 }
