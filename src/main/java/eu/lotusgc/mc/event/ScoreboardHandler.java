@@ -37,7 +37,6 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
-import eu.lotusgc.mc.command.AfKCMD;
 import eu.lotusgc.mc.main.LotusController;
 import eu.lotusgc.mc.main.Main;
 import eu.lotusgc.mc.misc.ClearLag;
@@ -81,7 +80,6 @@ public class ScoreboardHandler implements Listener {
 		Objective o = sb.registerNewObjective("aaa", Criteria.DUMMY, "LGCINFOBOARD");
 		LotusController lc = new LotusController();
 		String sbPrefix = lc.getPrefix(Prefix.SCOREBOARD);
-		LotusPlayer lp = new LotusPlayer(player);
 
 		o.setDisplaySlot(DisplaySlot.SIDEBAR);
 		sbSwitch++;
