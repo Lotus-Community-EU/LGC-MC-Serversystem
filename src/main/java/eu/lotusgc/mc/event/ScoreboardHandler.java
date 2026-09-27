@@ -55,6 +55,11 @@ public class ScoreboardHandler implements Listener {
 	private static HashMap<String, String> roleHM = new HashMap<>(); // HashMap for Team Priority (Sorted)
 	private static HashMap<String, String> sbHM = new HashMap<>(); // HashMap for Sideboard (Like Chat, just with no additional chars)
 
+	{
+		//BETA
+		
+	}
+
 	/*
 	 * Scoreboard States:
 	 * 0 = off
@@ -510,7 +515,17 @@ public class ScoreboardHandler implements Listener {
 				count++;
 				tabHM.put(rs.getString("ingame_id"), rs.getString("colour") + rs.getString("short"));
 				chatHM.put(rs.getString("ingame_id"), rs.getString("colour") + rs.getString("name"));
-				roleHM.put(rs.getString("ingame_id"), rs.getString("priority"));
+				String priority = rs.getString("priority");
+				if (priority.length() == 1) {
+					priority = "0000" + priority;
+				}else if(priority.length() == 2){
+					priority = "000" + priority;
+				}else if(priority.length() == 3) {
+					priority = "00" + priority;
+				}else if(priority.length() == 4) {
+					priority = "0" + priority;
+				}
+				roleHM.put(rs.getString("ingame_id"), priority + "LGCBRD");
 				sbHM.put(rs.getString("ingame_id"), rs.getString("name"));
 			}
 			Main.logger.info(

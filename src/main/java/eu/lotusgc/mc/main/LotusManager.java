@@ -164,7 +164,6 @@ public class LotusManager {
 		deleteOldLogFiles();
 
 		SyncServerdata.startScheduler();
-		new ScoreboardHandler().initRoles();
 		new ScoreboardHandler().startScheduler(0, 40, 20);
 		InventoryHandler.loadServer();
 
